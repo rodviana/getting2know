@@ -21,7 +21,7 @@ function LandingHeader() {
           </div>
           <div>
             <p className="text-sm font-bold text-slate-900">Getting2Know</p>
-            <p className="text-xs text-slate-500">Perguntas para se conhecer</p>
+            <p className="text-xs text-slate-500">Perguntas em dupla</p>
           </div>
         </Link>
         <Link to="/login" className="btn-primary px-5">
@@ -50,8 +50,8 @@ function DemoSessionPreview() {
 
   return (
     <div className="relative">
-      <div className="absolute -inset-4 rounded-3xl bg-gradient-to-br from-rose-200/40 via-orange-100/30 to-violet-100/40 blur-2xl" aria-hidden="true" />
-      <div className="relative overflow-hidden rounded-2xl border border-rose-100/80 bg-white shadow-xl shadow-rose-100/60">
+      <div className="absolute -inset-4 rounded-3xl bg-gradient-to-br from-slate-200/30 to-slate-100/20 blur-2xl" aria-hidden="true" />
+      <div className="relative overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-lg shadow-slate-200/50">
         <div className="border-b border-slate-100 bg-slate-50/80 px-5 py-3">
           <div className="flex items-center justify-between gap-3">
             <div className="flex items-center gap-2">
@@ -162,37 +162,35 @@ function SampleQuestionCard({ question, index }) {
 
 export default function Landing() {
   return (
-    <div className="min-h-screen bg-gradient-to-b from-rose-50/80 via-white to-slate-50">
+    <div className="min-h-screen bg-gradient-to-b from-slate-50 via-white to-white">
       <LandingHeader />
 
       <main>
         <section className="mx-auto max-w-6xl px-4 py-12 lg:px-8 lg:py-20">
           <div className="grid items-center gap-12 lg:grid-cols-2 lg:gap-16">
             <div>
-              <p className="mb-4 inline-flex items-center gap-2 rounded-full bg-rose-100/80 px-3 py-1 text-xs font-semibold uppercase tracking-wider text-rose-700">
-                <span aria-hidden="true">💬</span>
-                Para duas pessoas que querem se conhecer melhor
+              <p className="mb-4 text-sm font-medium text-slate-500">
+                Questionário para duas pessoas
               </p>
               <h1 className="text-4xl font-bold tracking-tight text-slate-900 sm:text-5xl lg:text-[3.25rem] lg:leading-[1.1]">
-                Perguntas que viram{' '}
-                <span className="bg-gradient-to-r from-rose-500 to-orange-500 bg-clip-text text-transparent">
-                  conversa de verdade
-                </span>
+                Vocês respondem.
+                <br />
+                Depois veem juntos.
               </h1>
               <p className="mt-5 max-w-xl text-lg leading-relaxed text-slate-600">
-                Monte um questionário, convide alguém com um link e descubram respostas
-                juntos — no seu ritmo ou ao vivo, como preferirem.
+                Crie perguntas, envie um link e comparem as respostas —
+                cada um no seu tempo ou ao vivo.
               </p>
               <div className="mt-8 flex flex-col gap-3 sm:flex-row">
                 <Link to="/login" className="btn-primary px-6 py-3 text-base">
-                  Começar agora — é grátis
+                  Entrar
                 </Link>
                 <a href="#como-funciona" className="btn-secondary px-6 py-3 text-base">
-                  Ver como funciona
+                  Como funciona
                 </a>
               </div>
               <p className="mt-4 text-sm text-slate-500">
-                Entre com usuário e senha. Se for sua primeira vez, criamos sua conta na hora.
+                Usuário e senha. Primeira vez? A conta é criada na hora.
               </p>
             </div>
 
@@ -200,19 +198,19 @@ export default function Landing() {
           </div>
         </section>
 
-        <section id="como-funciona" className="border-y border-rose-100/80 bg-white/60 py-16 lg:py-20">
+        <section id="como-funciona" className="border-y border-slate-200/80 bg-white py-16 lg:py-20">
           <div className="mx-auto max-w-6xl px-4 lg:px-8">
             <div className="mx-auto max-w-2xl text-center">
               <h2 className="text-3xl font-bold tracking-tight text-slate-900">Como funciona</h2>
               <p className="mt-3 text-slate-600">
-                Simples de começar. Profundo o suficiente para surpreender quem você convidar.
+                Quatro passos. Nada escondido.
               </p>
             </div>
 
             <ol className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
               {LANDING_STEPS.map((item) => (
                 <li key={item.step} className="card p-5">
-                  <span className="text-2xl font-bold text-rose-200">{item.step}</span>
+                  <span className="text-2xl font-bold text-slate-200">{item.step}</span>
                   <h3 className="mt-3 font-semibold text-slate-900">{item.title}</h3>
                   <p className="mt-2 text-sm leading-relaxed text-slate-600">{item.description}</p>
                 </li>
@@ -257,7 +255,7 @@ export default function Landing() {
                 Perguntas para cada momento
               </h2>
               <p className="mt-3 text-slate-600">
-                Leves para quebrar o gelo, profundas para ir além, divertidas para rir juntos —
+                Leves para quebrar o gelo, mais profundas se quiser ir além, engraçadas para rir —
                 ou crie as suas.
               </p>
             </div>
@@ -271,19 +269,18 @@ export default function Landing() {
         </section>
 
         <section className="mx-auto max-w-6xl px-4 pb-20 lg:px-8">
-          <div className="overflow-hidden rounded-2xl bg-gradient-to-br from-rose-500 to-rose-600 px-6 py-12 text-center shadow-xl shadow-rose-200/50 sm:px-12">
+          <div className="overflow-hidden rounded-2xl border border-slate-200 bg-slate-900 px-6 py-12 text-center sm:px-12">
             <h2 className="text-3xl font-bold tracking-tight text-white">
-              Pronto para a próxima conversa?
+              Teste com alguém
             </h2>
-            <p className="mx-auto mt-3 max-w-xl text-rose-100">
-              Convide alguém especial, um amigo distante ou quem você quer conhecer melhor.
-              Leva menos de um minuto para começar.
+            <p className="mx-auto mt-3 max-w-xl text-slate-300">
+              Crie uma sessão e mande o link. Leva menos de um minuto.
             </p>
             <Link
               to="/login"
-              className="mt-8 inline-flex items-center justify-center rounded-lg bg-white px-8 py-3 text-base font-semibold text-rose-600 shadow-sm transition hover:bg-rose-50"
+              className="mt-8 inline-flex items-center justify-center rounded-lg bg-white px-8 py-3 text-base font-semibold text-slate-900 shadow-sm transition hover:bg-slate-100"
             >
-              Entrar na plataforma
+              Entrar
             </Link>
           </div>
         </section>
@@ -291,7 +288,7 @@ export default function Landing() {
 
       <footer className="border-t border-slate-200/80 bg-white py-8">
         <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-4 px-4 text-sm text-slate-500 sm:flex-row lg:px-8">
-          <p>Getting2Know — perguntas para duas pessoas se conhecerem.</p>
+          <p>Getting2Know — perguntas em dupla.</p>
           <Link to="/login" className="font-medium text-rose-600 hover:text-rose-700">
             Entrar
           </Link>
