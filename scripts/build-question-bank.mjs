@@ -91,6 +91,13 @@ export { BANK_SECTIONS };
 
 writeFileSync(outPath, output);
 
+const statsPath = join(root, 'client/src/constants/questionBankStats.js');
+const themeCount = mergedSections.length;
+writeFileSync(
+  statsPath,
+  `/** Atualizado por scripts/build-question-bank.mjs */\nexport const BUILT_IN_QUESTION_COUNT = ${totalQuestions};\nexport const BUILT_IN_THEME_COUNT = ${themeCount};\n`,
+);
+
 console.log(`Built ${totalQuestions} questions across ${mergedSections.length} categories`);
 mergedSections.forEach((section) => {
   console.log(`  ${section.categoryId}: ${section.questions.length}`);

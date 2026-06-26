@@ -2,16 +2,31 @@ import { Link } from 'react-router-dom';
 import CategoryBadge from '../components/session/CategoryBadge';
 import QuestionTypeBadge from '../components/session/QuestionTypeBadge';
 import SessionProgress from '../components/session/SessionProgress';
+import { BUILT_IN_QUESTION_COUNT, BUILT_IN_THEME_COUNT } from '../constants/questionBankStats';
+import {
+  formatPackSubtitle,
+  getPackRelationLabel,
+  PACK_INTENSITY,
+  QUESTION_PACKS,
+} from '../constants/questionPacks';
 import {
   LANDING_DEMO,
+  LANDING_FEATURED_PACK_IDS,
+  LANDING_RELATIONS,
   LANDING_SAMPLE_QUESTIONS,
   LANDING_STEPS,
 } from '../data/landingMocks';
 import { getSessionFormatLabel, getSessionFormatStyle } from '../utils/sessionFormat';
 
+const THEME_COUNT = BUILT_IN_THEME_COUNT;
+const PACK_COUNT = QUESTION_PACKS.length;
+const FEATURED_PACKS = LANDING_FEATURED_PACK_IDS
+  .map((id) => QUESTION_PACKS.find((pack) => pack.id === id))
+  .filter(Boolean);
+
 function LandingHeader() {
   return (
-    <header className="sticky top-0 z-30 border-b border-rose-100/80 bg-white/90 backdrop-blur-md">
+    <header className="sticky top-0 z-30 border-b border-slate-200/80 bg-white/90 backdrop-blur-md">
       <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-3 lg:px-8">
         <Link to="/" className="flex items-center gap-3">
           <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-rose-500 to-rose-600 text-white shadow-sm">
@@ -29,6 +44,25 @@ function LandingHeader() {
         </Link>
       </div>
     </header>
+  );
+}
+
+function StatsBar() {
+  const stats = [
+    { value: `${BUILT_IN_QUESTION_COUNT.toLocaleString('pt-BR')}+`, label: 'perguntas' },
+    { value: String(THEME_COUNT), label: 'temas' },
+    { value: String(PACK_COUNT), label: 'pacotes prontos' },
+  ];
+
+  return (
+    <div className="mt-8 flex flex-wrap gap-6 border-t border-slate-200 pt-6">
+      {stats.map((stat) => (
+        <div key={stat.label}>
+          <p className="text-2xl font-bold text-slate-900">{stat.value}</p>
+          <p className="text-sm text-slate-500">{stat.label}</p>
+        </div>
+      ))}
+    </div>
   );
 }
 
@@ -54,7 +88,7 @@ function DemoSessionPreview() {
       <div className="relative overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-lg shadow-slate-200/50">
         <div className="border-b border-slate-100 bg-slate-50/80 px-5 py-3">
           <div className="flex items-center justify-between gap-3">
-            <div className="flex items-center gap-2">
+            <div className="flex flex-wrap items-center gap-2">
               <span className="rounded-md border border-slate-200 bg-white px-2 py-0.5 font-mono text-sm font-bold tracking-wider text-slate-700">
                 {demo.code}
               </span>
@@ -62,6 +96,9 @@ function DemoSessionPreview() {
                 className={`rounded-full px-2 py-0.5 text-xs font-medium ring-1 ring-inset ${getSessionFormatStyle(demo.format)}`}
               >
                 {getSessionFormatLabel(demo.format)}
+              </span>
+              <span className="rounded-full bg-slate-100 px-2 py-0.5 text-xs font-medium text-slate-600">
+                {demo.packLabel}
               </span>
             </div>
             <span className="text-xs font-medium text-emerald-600">Revelação</span>
@@ -135,11 +172,49 @@ function MockLobbyPreview() {
   );
 }
 
-function SampleQuestionCard({ question, index }) {
+function RelationCard({ emoji, label, hint }) {
+  return (
+    <li className="rounded-xl border border-slate-200 bg-white p-4 text-center shadow-sm">
+      <span className="text-2xl" aria-hidden="true">{emoji}</span>
+      <p className="mt-2 font-semibold text-slate-900">{label}</p>
+      <p className="mt-1 text-xs text-slate-500">{hint}</p>
+    </li>
+  );
+}
+
+function FeaturedPackCard({ pack }) {
+  const intensity = PACK_INTENSITY[pack.intensity];
+  const relation = getPackRelationLabel(pack);
+  const questionCount = pack.maxTotal ?? 10;
+
+  return (
+    <li className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
+      <div className="flex items-start gap-3">
+        <span className="text-2xl" aria-hidden="true">{pack.emoji}</span>
+        <div className="min-w-0 flex-1">
+          <div className="flex flex-wrap items-center gap-2">
+            <h3 className="font-semibold text-slate-900">{pack.title}</h3>
+            {intensity && (
+              <span className={`rounded-full px-2 py-0.5 text-xs font-medium ring-1 ring-inset ${intensity.className}`}>
+                {intensity.label}
+              </span>
+            )}
+          </div>
+          <p className="mt-1 text-sm text-slate-600">{pack.description}</p>
+          <p className="mt-2 text-xs font-medium text-slate-500">
+            {formatPackSubtitle(pack, questionCount)}
+            {relation ? ` · ${relation}` : ''}
+          </p>
+        </div>
+      </div>
+    </li>
+  );
+}
+
+function SampleQuestionCard({ question }) {
   return (
     <li className="rounded-xl border border-slate-200/80 bg-white p-4 shadow-sm">
-      <div className="mb-2 flex items-center gap-2">
-        <span className="text-sm font-bold text-rose-500">{index + 1}.</span>
+      <div className="mb-2 flex flex-wrap items-center gap-2">
         <CategoryBadge categoryId={question.categoryId} />
         <QuestionTypeBadge type={question.type} />
       </div>
@@ -178,44 +253,77 @@ export default function Landing() {
                 Depois veem juntos.
               </h1>
               <p className="mt-5 max-w-xl text-lg leading-relaxed text-slate-600">
-                Crie perguntas, envie um link e comparem as respostas —
-                cada um no seu tempo ou ao vivo.
+                Mais de {BUILT_IN_QUESTION_COUNT.toLocaleString('pt-BR')} perguntas em{' '}
+                {THEME_COUNT} temas — amigos, família, trabalho ou romance.
+                Escolha um pacote pronto ou monte o seu.
               </p>
               <div className="mt-8 flex flex-col gap-3 sm:flex-row">
                 <Link to="/login" className="btn-primary px-6 py-3 text-base">
                   Entrar
                 </Link>
-                <a href="#como-funciona" className="btn-secondary px-6 py-3 text-base">
-                  Como funciona
+                <a href="#pacotes" className="btn-secondary px-6 py-3 text-base">
+                  Ver pacotes
                 </a>
               </div>
               <p className="mt-4 text-sm text-slate-500">
                 Usuário e senha. Primeira vez? A conta é criada na hora.
               </p>
+              <StatsBar />
             </div>
 
             <DemoSessionPreview />
           </div>
         </section>
 
-        <section id="como-funciona" className="border-y border-slate-200/80 bg-white py-16 lg:py-20">
+        <section id="para-quem" className="border-y border-slate-200/80 bg-white py-16 lg:py-20">
           <div className="mx-auto max-w-6xl px-4 lg:px-8">
             <div className="mx-auto max-w-2xl text-center">
-              <h2 className="text-3xl font-bold tracking-tight text-slate-900">Como funciona</h2>
+              <h2 className="text-3xl font-bold tracking-tight text-slate-900">Para quem?</h2>
               <p className="mt-3 text-slate-600">
-                Quatro passos. Nada escondido.
+                Pacotes e temas para cada tipo de dupla — sem assumir romance.
               </p>
             </div>
-
-            <ol className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-              {LANDING_STEPS.map((item) => (
-                <li key={item.step} className="card p-5">
-                  <span className="text-2xl font-bold text-slate-200">{item.step}</span>
-                  <h3 className="mt-3 font-semibold text-slate-900">{item.title}</h3>
-                  <p className="mt-2 text-sm leading-relaxed text-slate-600">{item.description}</p>
-                </li>
+            <ul className="mt-10 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
+              {LANDING_RELATIONS.map((item) => (
+                <RelationCard key={item.label} {...item} />
               ))}
-            </ol>
+            </ul>
+          </div>
+        </section>
+
+        <section id="como-funciona" className="mx-auto max-w-6xl px-4 py-16 lg:px-8 lg:py-20">
+          <div className="mx-auto max-w-2xl text-center">
+            <h2 className="text-3xl font-bold tracking-tight text-slate-900">Como funciona</h2>
+            <p className="mt-3 text-slate-600">Quatro passos. Nada escondido.</p>
+          </div>
+
+          <ol className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+            {LANDING_STEPS.map((item) => (
+              <li key={item.step} className="card p-5">
+                <span className="text-2xl font-bold text-slate-200">{item.step}</span>
+                <h3 className="mt-3 font-semibold text-slate-900">{item.title}</h3>
+                <p className="mt-2 text-sm leading-relaxed text-slate-600">{item.description}</p>
+              </li>
+            ))}
+          </ol>
+        </section>
+
+        <section id="pacotes" className="border-t border-slate-200/80 bg-slate-50/80 py-16 lg:py-20">
+          <div className="mx-auto max-w-6xl px-4 lg:px-8">
+            <div className="mx-auto max-w-2xl text-center">
+              <h2 className="text-3xl font-bold tracking-tight text-slate-900">Pacotes prontos</h2>
+              <p className="mt-3 text-slate-600">
+                Comece com um pacote curado — ou explore por tema dentro do app.
+              </p>
+            </div>
+            <ul className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              {FEATURED_PACKS.map((pack) => (
+                <FeaturedPackCard key={pack.id} pack={pack} />
+              ))}
+            </ul>
+            <p className="mt-6 text-center text-sm text-slate-500">
+              + {PACK_COUNT - FEATURED_PACKS.length} pacotes e centenas de temas dentro do app.
+            </p>
           </div>
         </section>
 
@@ -248,21 +356,20 @@ export default function Landing() {
           </div>
         </section>
 
-        <section className="border-t border-slate-200/80 bg-slate-50/80 py-16 lg:py-20">
+        <section id="exemplos" className="border-t border-slate-200/80 bg-white py-16 lg:py-20">
           <div className="mx-auto max-w-6xl px-4 lg:px-8">
             <div className="mx-auto max-w-2xl text-center">
               <h2 className="text-3xl font-bold tracking-tight text-slate-900">
-                Perguntas para cada momento
+                Exemplos por relação
               </h2>
               <p className="mt-3 text-slate-600">
-                Leves para quebrar o gelo, mais profundas se quiser ir além, engraçadas para rir —
-                ou crie as suas.
+                Cada tema traz perguntas sobre a dupla de vocês — amizade, trabalho, família e mais.
               </p>
             </div>
 
-            <ul className="mt-10 grid gap-4 lg:grid-cols-3">
-              {LANDING_SAMPLE_QUESTIONS.map((question, index) => (
-                <SampleQuestionCard key={question.text} question={question} index={index} />
+            <ul className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              {LANDING_SAMPLE_QUESTIONS.map((question) => (
+                <SampleQuestionCard key={question.text} question={question} />
               ))}
             </ul>
           </div>
@@ -274,7 +381,7 @@ export default function Landing() {
               Teste com alguém
             </h2>
             <p className="mx-auto mt-3 max-w-xl text-slate-300">
-              Crie uma sessão e mande o link. Leva menos de um minuto.
+              Escolha um pacote, mande o link. Leva menos de um minuto.
             </p>
             <Link
               to="/login"
