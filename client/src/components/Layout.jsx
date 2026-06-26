@@ -26,7 +26,7 @@ export default function Layout() {
               </div>
               <div>
                 <p className="text-sm font-bold text-slate-900">Getting2Know</p>
-                <p className="text-xs text-slate-500">Perguntas para se conhecer</p>
+                <p className="text-xs text-slate-500">Perguntas em dupla</p>
               </div>
             </Link>
           </div>

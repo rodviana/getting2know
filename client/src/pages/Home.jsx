@@ -125,7 +125,7 @@ export default function Home() {
             {home.message}
           </h1>
           <p className="mt-1 text-sm text-slate-500">
-            Convide alguém, respondam no ritmo de vocês e vejam as respostas juntos.
+            Crie uma sessão ou entre com um link que recebeu.
           </p>
         </header>
 
@@ -151,7 +151,7 @@ export default function Home() {
             <div className="rounded-xl border border-dashed border-slate-200 bg-slate-50/50 px-4 py-6 text-center">
               <p className="text-sm font-medium text-slate-700">Nenhuma sessão em andamento</p>
               <p className="mt-1 text-sm text-slate-500">
-                Crie uma nova ou entre com um código que recebeu.
+                Crie uma nova ou entre com um link que recebeu.
               </p>
             </div>
           )}
@@ -165,7 +165,7 @@ export default function Home() {
             Nova sessão
           </Link>
           <button type="button" onClick={openJoinModal} className="btn-secondary flex-1 py-3">
-            Tenho um código
+            Tenho um link
           </button>
         </section>
 

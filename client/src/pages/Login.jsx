@@ -86,7 +86,7 @@ export default function Login() {
           </div>
           <h1 className="text-3xl font-bold tracking-tight text-slate-900">Getting2Know</h1>
           <p className="mt-2 text-sm leading-relaxed text-slate-600">
-            Perguntas para duas pessoas se conhecerem melhor.
+            Perguntas em dupla.
           </p>
         </div>
 

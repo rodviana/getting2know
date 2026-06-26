@@ -25,6 +25,6 @@ public class HomeService {
                 user.getId(),
                 user.getName(),
                 user.getEmail(),
-                "Olá, " + user.getName() + "! Prontos para se conhecer melhor?");
+                "Olá, " + user.getName() + ".");
     }
 }
