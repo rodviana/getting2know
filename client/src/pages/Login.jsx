@@ -19,8 +19,12 @@ export default function Login() {
   const [registerOpen, setRegisterOpen] = useState(false);
   const [inlineError, setInlineError] = useState('');
 
-  function navigateAfterAuth() {
-    navigate(redirectTo || '/home', { replace: true });
+  function navigateAfterAuth(role) {
+    if (redirectTo) {
+      navigate(redirectTo, { replace: true });
+      return;
+    }
+    navigate(role === 'ADMIN' ? '/admin' : '/home', { replace: true });
   }
 
   async function handleEnter(event) {
@@ -30,7 +34,7 @@ export default function Login() {
     try {
       const data = await login(username.trim(), password, { showError: false });
       saveSession(data);
-      navigateAfterAuth();
+      navigateAfterAuth(data.role);
     } catch (error) {
       if (error instanceof ApiError && error.code === 'USER_NOT_FOUND') {
         setRegisterOpen(true);
@@ -54,7 +58,7 @@ export default function Login() {
       const trimmedUsername = username.trim();
       const data = await register(trimmedUsername, password, trimmedUsername, { showError: false });
       saveSession(data);
-      navigateAfterAuth();
+      navigateAfterAuth(data.role);
     } catch (error) {
       if (error instanceof ApiError) {
         setInlineError(error.message);

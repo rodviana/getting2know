@@ -1,6 +1,7 @@
 package com.getting2know.service;
 
 import com.getting2know.exception.GlobalException;
+import com.getting2know.model.enums.ActivityEventTypeEnum;
 import com.getting2know.model.enums.ValidationMessageEnum;
 import com.getting2know.model.request.LoginRequest;
 import com.getting2know.model.response.LoginResponse;
@@ -22,13 +23,16 @@ public class LoginService {
     private final AuthJdbcRepository authJdbcRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
+    private final ActivityService activityService;
 
     public LoginService(AuthJdbcRepository authJdbcRepository,
                         PasswordEncoder passwordEncoder,
-                        JwtService jwtService) {
+                        JwtService jwtService,
+                        ActivityService activityService) {
         this.authJdbcRepository = authJdbcRepository;
         this.passwordEncoder = passwordEncoder;
         this.jwtService = jwtService;
+        this.activityService = activityService;
     }
 
     public LoginResponse login(LoginRequest request) {
@@ -46,7 +50,8 @@ public class LoginService {
         }
 
         String token = jwtService.generate(user);
+        activityService.record(ActivityEventTypeEnum.LOGIN, "/api/v1/auth/login", user, null);
         log.info("[login] OK username={}", user.getEmail());
-        return new LoginResponse(token, user.getName(), user.getEmail());
+        return new LoginResponse(token, user.getName(), user.getEmail(), user.getRole());
     }
 }

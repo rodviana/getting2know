@@ -21,8 +21,15 @@ public final class Getting2KnowControllerMapping {
     /** Pair sessions — /sessions */
     public static final String SESSIONS_PATH = API_VERSION_V1 + "/sessions";
 
+    /** Analytics — page views */
+    public static final String ANALYTICS_PATH = API_VERSION_V1 + "/analytics";
+
+    /** Admin panel — /admin */
+    public static final String ADMIN_PATH = API_VERSION_V1 + "/admin";
+
     public static final String AUTH_LOGIN = "/login";
     public static final String AUTH_REGISTER = "/register";
+    public static final String ANALYTICS_PAGE_VIEW = "/page-view";
     public static final String SESSIONS_JOIN = "/join";
     public static final String SESSIONS_MINE = "/mine";
     public static final String SESSIONS_PREVIOUSLY_ASKED = "/previously-asked";

@@ -29,12 +29,14 @@ public class SecurityConfig {
                 .authorizeRequests()
                 .antMatchers(HttpMethod.POST, "/api/v1/auth/login").permitAll()
                 .antMatchers(HttpMethod.POST, "/api/v1/auth/register").permitAll()
+                .antMatchers(HttpMethod.POST, "/api/v1/analytics/page-view").permitAll()
                 .antMatchers("/api/health").permitAll()
                 .antMatchers(
                         "/swagger-ui/**",
                         "/swagger-ui.html",
                         "/v3/api-docs/**"
                 ).permitAll()
+                .antMatchers("/api/v1/admin/**").hasRole("ADMIN")
                 .anyRequest().authenticated()
                 .and()
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);

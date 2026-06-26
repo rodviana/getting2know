@@ -1,5 +1,6 @@
 package com.getting2know.repository.mapper;
 
+import com.getting2know.model.enums.UserRoleEnum;
 import com.getting2know.model.record.UserRecord;
 import org.springframework.jdbc.core.RowMapper;
 
@@ -19,6 +20,7 @@ public final class UserRowMapper {
                 rs.getString("email"),
                 rs.getString("password"),
                 rs.getString("name"),
-                rs.getBoolean("active"));
+                rs.getBoolean("active"),
+                rs.getString("role") != null ? rs.getString("role") : UserRoleEnum.USER.getCode());
     }
 }

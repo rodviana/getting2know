@@ -1,6 +1,7 @@
 package com.getting2know.service;
 
 import com.getting2know.exception.GlobalException;
+import com.getting2know.model.enums.ActivityEventTypeEnum;
 import com.getting2know.model.enums.ValidationMessageEnum;
 import com.getting2know.model.record.UserRecord;
 import com.getting2know.model.request.RegisterRequest;
@@ -23,13 +24,16 @@ public class RegisterService {
     private final AuthJdbcRepository authJdbcRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
+    private final ActivityService activityService;
 
     public RegisterService(AuthJdbcRepository authJdbcRepository,
                            PasswordEncoder passwordEncoder,
-                           JwtService jwtService) {
+                           JwtService jwtService,
+                           ActivityService activityService) {
         this.authJdbcRepository = authJdbcRepository;
         this.passwordEncoder = passwordEncoder;
         this.jwtService = jwtService;
+        this.activityService = activityService;
     }
 
     public LoginResponse register(RegisterRequest request) {
@@ -50,7 +54,8 @@ public class RegisterService {
                 .orElseThrow(() -> GlobalException.of(ValidationMessageEnum.FAILED_CREATE_USER));
 
         String token = jwtService.generate(user);
+        activityService.record(ActivityEventTypeEnum.REGISTER, "/api/v1/auth/register", user, null);
         log.info("[register] OK username={}", user.getEmail());
-        return new LoginResponse(token, user.getName(), user.getEmail());
+        return new LoginResponse(token, user.getName(), user.getEmail(), user.getRole());
     }
 }

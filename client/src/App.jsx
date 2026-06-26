@@ -9,6 +9,9 @@ import Home from './pages/Home';
 import CreateSession from './pages/CreateSession';
 import JoinSession from './pages/JoinSession';
 import JoinSessionByLink from './pages/JoinSessionByLink';
+import AdminRoute from './components/AdminRoute';
+import PageViewTracker from './components/PageViewTracker';
+import Admin from './pages/Admin';
 import { sanitizeRedirectPath } from './utils/navigation';
 import SessionLobby from './pages/SessionLobby';
 import SessionPlay from './pages/SessionPlay';
@@ -25,11 +28,14 @@ function LandingRoute() {
 }
 
 function LoginRoute() {
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, isAdmin } = useAuth();
   const [searchParams] = useSearchParams();
   const redirectTo = sanitizeRedirectPath(searchParams.get('redirect'));
   if (isAuthenticated) {
-    return <Navigate to={redirectTo || '/home'} replace />;
+    if (redirectTo) {
+      return <Navigate to={redirectTo} replace />;
+    }
+    return <Navigate to={isAdmin ? '/admin' : '/home'} replace />;
   }
   return <Login />;
 }
@@ -39,10 +45,14 @@ export default function App() {
     <ToastProvider>
       <AuthProvider>
         <BrowserRouter>
+          <PageViewTracker />
           <Routes>
             <Route path="/" element={<LandingRoute />} />
             <Route path="/login" element={<LoginRoute />} />
             <Route path="/join/:code" element={<JoinSessionByLink />} />
+            <Route element={<AdminRoute />}>
+              <Route path="/admin" element={<Admin />} />
+            </Route>
             <Route element={<ProtectedRoute />}>
               <Route element={<Layout />}>
                 <Route path="home" element={<Home />} />

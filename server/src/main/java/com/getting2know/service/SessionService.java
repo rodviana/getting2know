@@ -1,6 +1,7 @@
 package com.getting2know.service;
 
 import com.getting2know.exception.GlobalException;
+import com.getting2know.model.enums.ActivityEventTypeEnum;
 import com.getting2know.model.enums.SessionFormatEnum;
 import com.getting2know.model.enums.SessionStatusEnum;
 import com.getting2know.model.enums.ValidationMessageEnum;
@@ -55,11 +56,14 @@ public class SessionService {
 
     private final AuthJdbcRepository authJdbcRepository;
     private final PairSessionJdbcRepository pairSessionJdbcRepository;
+    private final ActivityService activityService;
 
     public SessionService(AuthJdbcRepository authJdbcRepository,
-                          PairSessionJdbcRepository pairSessionJdbcRepository) {
+                          PairSessionJdbcRepository pairSessionJdbcRepository,
+                          ActivityService activityService) {
         this.authJdbcRepository = authJdbcRepository;
         this.pairSessionJdbcRepository = pairSessionJdbcRepository;
+        this.activityService = activityService;
     }
 
     public CreateSessionResponse createSession(String email, CreateSessionRequest request) {
@@ -93,6 +97,12 @@ public class SessionService {
             position += 1;
         }
 
+        activityService.record(
+                ActivityEventTypeEnum.SESSION_CREATE,
+                "/api/v1/sessions",
+                host,
+                "{\"code\":\"" + session.getCode() + "\"}");
+
         return new CreateSessionResponse(session.getCode());
     }
 
@@ -115,6 +125,11 @@ public class SessionService {
         if (existing.getPartnerUserId() == null) {
             pairSessionJdbcRepository.join(new JoinSessionFilter(code, partner.getId()))
                     .orElseThrow(() -> GlobalException.of(ValidationMessageEnum.SESSION_ALREADY_FULL));
+            activityService.record(
+                    ActivityEventTypeEnum.SESSION_JOIN,
+                    "/api/v1/sessions/join",
+                    partner,
+                    "{\"code\":\"" + code + "\"}");
         }
 
         return getSession(email, code);
@@ -177,6 +192,12 @@ public class SessionService {
 
         pairSessionJdbcRepository.start(new SessionIdFilter(session.getId()))
                 .orElseThrow(() -> GlobalException.of(ValidationMessageEnum.SESSION_INVALID_STATUS));
+
+        activityService.record(
+                ActivityEventTypeEnum.SESSION_START,
+                "/api/v1/sessions/" + code + "/start",
+                currentUser,
+                "{\"code\":\"" + code + "\"}");
 
         return getSession(email, code);
     }

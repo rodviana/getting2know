@@ -17,10 +17,12 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
       - ./server/src/main/resources/database/V001_schema_users.sql:/docker-entrypoint-initdb.d/10-V001_schema_users.sql:ro
+      - ./server/src/main/resources/database/V008_schema_admin_activity.sql:/docker-entrypoint-initdb.d/11-V008_schema_admin_activity.sql:ro
       - ./server/src/main/resources/database/P_FIND_USER_BY_EMAIL.sql:/docker-entrypoint-initdb.d/20-P_FIND_USER_BY_EMAIL.sql:ro
       - ./server/src/main/resources/database/P_FIND_USER_BY_ID.sql:/docker-entrypoint-initdb.d/25-P_FIND_USER_BY_ID.sql:ro
       - ./server/src/main/resources/database/P_CREATE_USER.sql:/docker-entrypoint-initdb.d/26-P_CREATE_USER.sql:ro
       - ./server/src/main/resources/database/V002_seed_demo.sql:/docker-entrypoint-initdb.d/30-V002_seed_demo.sql:ro
+      - ./server/src/main/resources/database/V009_seed_admin.sql:/docker-entrypoint-initdb.d/31-V009_seed_admin.sql:ro
       - ./server/src/main/resources/database/V003_schema_questions_sessions.sql:/docker-entrypoint-initdb.d/40-V003_schema_questions_sessions.sql:ro
       - ./server/src/main/resources/database/V004_session_format.sql:/docker-entrypoint-initdb.d/41-V004_session_format.sql:ro
       - ./server/src/main/resources/database/V005_system_questions.sql:/docker-entrypoint-initdb.d/42-V005_system_questions.sql:ro
@@ -43,6 +45,18 @@ services:
       - ./server/src/main/resources/database/P_COUNT_ANSWERS_FOR_QUESTION.sql:/docker-entrypoint-initdb.d/69-P_COUNT_ANSWERS_FOR_QUESTION.sql:ro
       - ./server/src/main/resources/database/P_LIST_USER_PAIR_SESSIONS.sql:/docker-entrypoint-initdb.d/70-P_LIST_USER_PAIR_SESSIONS.sql:ro
       - ./server/src/main/resources/database/P_LIST_PREVIOUSLY_ASKED_QUESTION_REFS.sql:/docker-entrypoint-initdb.d/71-P_LIST_PREVIOUSLY_ASKED_QUESTION_REFS.sql:ro
+      - ./server/src/main/resources/database/P_INSERT_ACTIVITY_EVENT.sql:/docker-entrypoint-initdb.d/72-P_INSERT_ACTIVITY_EVENT.sql:ro
+      - ./server/src/main/resources/database/P_LIST_ACTIVITY_EVENTS.sql:/docker-entrypoint-initdb.d/73-P_LIST_ACTIVITY_EVENTS.sql:ro
+      - ./server/src/main/resources/database/P_COUNT_ACTIVITY_EVENTS.sql:/docker-entrypoint-initdb.d/74-P_COUNT_ACTIVITY_EVENTS.sql:ro
+      - ./server/src/main/resources/database/P_ADMIN_DASHBOARD_STATS.sql:/docker-entrypoint-initdb.d/75-P_ADMIN_DASHBOARD_STATS.sql:ro
+      - ./server/src/main/resources/database/P_LIST_USERS_ADMIN.sql:/docker-entrypoint-initdb.d/76-P_LIST_USERS_ADMIN.sql:ro
+      - ./server/src/main/resources/database/P_LIST_SESSIONS_ADMIN.sql:/docker-entrypoint-initdb.d/77-P_LIST_SESSIONS_ADMIN.sql:ro
+      - ./server/src/main/resources/database/P_COUNT_SESSIONS_ADMIN.sql:/docker-entrypoint-initdb.d/78-P_COUNT_SESSIONS_ADMIN.sql:ro
+      - ./server/src/main/resources/database/P_GET_SESSION_ADMIN_BY_CODE.sql:/docker-entrypoint-initdb.d/79-P_GET_SESSION_ADMIN_BY_CODE.sql:ro
+      - ./server/src/main/resources/database/P_LIST_SESSION_QUESTIONS_ADMIN.sql:/docker-entrypoint-initdb.d/80-P_LIST_SESSION_QUESTIONS_ADMIN.sql:ro
+      - ./server/src/main/resources/database/P_ADMIN_QUESTION_RANKING.sql:/docker-entrypoint-initdb.d/81-P_ADMIN_QUESTION_RANKING.sql:ro
+      - ./server/src/main/resources/database/P_ADMIN_ANALYTICS_INSIGHTS.sql:/docker-entrypoint-initdb.d/82-P_ADMIN_ANALYTICS_INSIGHTS.sql:ro
+      - ./server/src/main/resources/database/P_ADMIN_CATEGORY_BREAKDOWN.sql:/docker-entrypoint-initdb.d/83-P_ADMIN_CATEGORY_BREAKDOWN.sql:ro
     networks:
       - getting2know
     restart: unless-stopped

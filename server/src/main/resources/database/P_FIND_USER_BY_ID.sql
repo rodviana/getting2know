@@ -4,13 +4,14 @@ RETURNS TABLE (
     email    VARCHAR,
     password VARCHAR,
     name     VARCHAR,
-    active   BOOLEAN
+    active   BOOLEAN,
+    role     VARCHAR
 )
 LANGUAGE plpgsql
 AS $$
 BEGIN
     RETURN QUERY
-    SELECT u.id, u.email, u.password, u.name, u.active
+    SELECT u.id, u.email, u.password, u.name, u.active, u.role
     FROM users u
     WHERE u.id = p_user_id
       AND u.active = TRUE;

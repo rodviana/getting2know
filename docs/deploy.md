@@ -177,6 +177,22 @@ git pull
 docker compose -f docker-compose.prod.yml --env-file .env.prod up --build -d
 ```
 
+Se a release incluir **painel admin** e o banco já existia antes, aplique a migration **sem** `-v`:
+
+```bash
+bash scripts/apply-admin-migration.sh
+docker compose -f docker-compose.prod.yml --env-file .env.prod up --build -d
+```
+
+Se o admin básico já estava instalado e a release traz **analytics de sessões/perguntas**, rode só o upgrade:
+
+```bash
+bash scripts/apply-admin-analytics-upgrade.sh
+docker compose -f docker-compose.prod.yml --env-file .env.prod up --build -d
+```
+
+Painel: **https://getting2know.com.br/admin** — login `admin` / senha configurada no seed.
+
 ---
 
 ## Comandos úteis

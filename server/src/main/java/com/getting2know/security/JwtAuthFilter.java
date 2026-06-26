@@ -1,5 +1,6 @@
 package com.getting2know.security;
 
+import com.getting2know.model.enums.UserRoleEnum;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -14,7 +15,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.Collections;
+import java.util.List;
 
 @Component
 public class JwtAuthFilter extends OncePerRequestFilter {
@@ -35,10 +36,14 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             try {
                 Claims claims = jwtService.parse(token);
                 String email = claims.getSubject();
+                String role = claims.get("role", String.class);
+                String authority = UserRoleEnum.ADMIN.getCode().equalsIgnoreCase(role)
+                        ? "ROLE_ADMIN"
+                        : "ROLE_USER";
                 UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(
                         email,
                         null,
-                        Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER")));
+                        List.of(new SimpleGrantedAuthority(authority)));
                 SecurityContextHolder.getContext().setAuthentication(auth);
             } catch (JwtException ignored) {
                 SecurityContextHolder.clearContext();

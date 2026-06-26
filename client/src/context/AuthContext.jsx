@@ -11,7 +11,11 @@ function loadSession() {
     const parsed = JSON.parse(raw);
     const username = parsed?.username ?? parsed?.email;
     if (parsed?.token && username) {
-      return { ...parsed, username };
+      return {
+        ...parsed,
+        username,
+        role: parsed?.role ?? 'USER',
+      };
     }
   } catch {
     localStorage.removeItem(STORAGE_KEY);
@@ -25,11 +29,13 @@ export function AuthProvider({ children }) {
   const value = useMemo(() => ({
     session,
     isAuthenticated: Boolean(session?.token),
+    isAdmin: session?.role === 'ADMIN',
     login(sessionData) {
       const next = {
         token: sessionData.token,
         name: sessionData.name,
         username: sessionData.username ?? sessionData.email,
+        role: sessionData.role ?? 'USER',
       };
       localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
       setSession(next);
