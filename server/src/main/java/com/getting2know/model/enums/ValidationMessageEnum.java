@@ -2,14 +2,14 @@ package com.getting2know.model.enums;
 
 public enum ValidationMessageEnum {
 
-    EMAIL_REQUIRED("EMAIL_REQUIRED", "E-mail é obrigatório.", "Email is required."),
-    INVALID_EMAIL("INVALID_EMAIL", "E-mail inválido.", "Invalid email."),
+    USERNAME_REQUIRED("USERNAME_REQUIRED", "Usuário é obrigatório.", "Username is required."),
+    INVALID_USERNAME("INVALID_USERNAME", "Usuário inválido. Use até 150 caracteres.", "Invalid username."),
     PASSWORD_REQUIRED("PASSWORD_REQUIRED", "Senha é obrigatória.", "Password is required."),
     INVALID_DATA("INVALID_DATA", "Dados inválidos.", "Invalid data."),
 
     INVALID_CREDENTIALS("INVALID_CREDENTIALS", "Senha incorreta. Tenta de novo?", "Incorrect password."),
-    USER_NOT_FOUND("USER_NOT_FOUND", "Não encontramos uma conta com este e-mail.", "No account found for this email."),
-    EMAIL_ALREADY_EXISTS("EMAIL_ALREADY_EXISTS", "Este e-mail já tem conta. Tenta entrar com sua senha.", "This email is already registered."),
+    USER_NOT_FOUND("USER_NOT_FOUND", "Não encontramos uma conta com este usuário.", "No account found for this username."),
+    USERNAME_ALREADY_EXISTS("USERNAME_ALREADY_EXISTS", "Este usuário já existe. Tenta entrar com sua senha.", "This username is already registered."),
     NAME_REQUIRED("NAME_REQUIRED", "Informe como podemos te chamar.", "Name is required."),
     FAILED_CREATE_USER("FAILED_CREATE_USER", "Não foi possível criar sua conta. Tenta de novo.", "Failed to create user."),
     UNEXPECTED_ERROR_REGISTER("UNEXPECTED_ERROR_REGISTER", "Erro inesperado ao criar conta.", "Unexpected error during registration."),
@@ -44,6 +44,7 @@ public enum ValidationMessageEnum {
     SESSION_ALREADY_ANSWERED("SESSION_ALREADY_ANSWERED", "Você já respondeu esta pergunta.", "You already answered this question."),
     SESSION_LIVE_HOST_ONLY("SESSION_LIVE_HOST_ONLY", "No modo ao vivo, só quem criou a sessão pode fazer isso.", "In live mode, only the session host can do this."),
     SESSION_FORMAT_INVALID("SESSION_FORMAT_INVALID", "Formato de sessão inválido.", "Invalid session format."),
+    SESSION_PARTNER_UNKNOWN("SESSION_PARTNER_UNKNOWN", "Não encontramos sessões anteriores com essa pessoa.", "No previous sessions found with this partner."),
     FAILED_LOAD_SESSION("FAILED_LOAD_SESSION", "Falha ao carregar sessão.", "Failed to load session."),
     FAILED_SAVE_SESSION("FAILED_SAVE_SESSION", "Falha ao salvar sessão.", "Failed to save session."),
     UNEXPECTED_ERROR_SESSIONS("UNEXPECTED_ERROR_SESSIONS", "Erro inesperado ao processar sessão.", "Unexpected error processing session.");

@@ -25,6 +25,7 @@ public final class Getting2KnowControllerMapping {
     public static final String AUTH_REGISTER = "/register";
     public static final String SESSIONS_JOIN = "/join";
     public static final String SESSIONS_MINE = "/mine";
+    public static final String SESSIONS_PREVIOUSLY_ASKED = "/previously-asked";
     public static final String SESSIONS_START = "/start";
     public static final String SESSIONS_ANSWERS = "/answers";
     public static final String SESSIONS_NEXT = "/next";

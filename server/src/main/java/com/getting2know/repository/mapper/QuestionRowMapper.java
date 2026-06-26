@@ -23,6 +23,7 @@ public final class QuestionRowMapper {
                 rs.getString("type"),
                 rs.getString("text"),
                 readJson(rs, "options"),
+                rs.getBoolean("is_system"),
                 toLocalDateTime(rs.getTimestamp("created_at")),
                 toLocalDateTime(rs.getTimestamp("updated_at")));
     }
@@ -35,6 +36,7 @@ public final class QuestionRowMapper {
                 rs.getString("type"),
                 rs.getString("text"),
                 readJson(rs, "options"),
+                false,
                 toLocalDateTime(rs.getTimestamp("created_at")),
                 toLocalDateTime(rs.getTimestamp("updated_at")));
     }

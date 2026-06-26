@@ -2,9 +2,9 @@ export const SESSION_FORMATS = {
   async: {
     id: 'async',
     apiValue: 'ASYNC',
-    label: 'Assíncrona',
-    shortLabel: 'Assíncrona',
-    description: 'Cada um responde no seu tempo. Qualquer um pode iniciar e avançar.',
+    label: 'No seu tempo',
+    shortLabel: 'No seu tempo',
+    description: 'Cada um responde quando quiser, no próprio ritmo. Só veem tudo quando os dois terminarem.',
     pollIntervalMs: 3000,
   },
   live: {
@@ -12,7 +12,7 @@ export const SESSION_FORMATS = {
     apiValue: 'LIVE',
     label: 'Ao vivo',
     shortLabel: 'Ao vivo',
-    description: 'Os dois online juntos. Só quem criou a sessão inicia e avança.',
+    description: 'Os dois online, juntos. Pergunta a pergunta — veem a resposta um do outro na hora.',
     pollIntervalMs: 1500,
   },
 };
@@ -36,4 +36,12 @@ export function getSessionFormatStyle(format) {
 
 export function getSessionPollInterval(format) {
   return getSessionFormatMeta(format).pollIntervalMs;
+}
+
+export function isAsyncFormat(format) {
+  return (format || 'async').toLowerCase() === 'async';
+}
+
+export function isLiveFormat(format) {
+  return (format || '').toLowerCase() === 'live';
 }

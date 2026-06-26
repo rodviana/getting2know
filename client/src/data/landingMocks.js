@@ -5,9 +5,9 @@ export const LANDING_DEMO = {
   format: 'async',
   progress: { current: 3, total: 8 },
   question: {
-    categoryId: 'deep',
+    categoryId: 'about_us',
     type: 'TEXT',
-    text: 'Qual memória sua costuma fazer você sorrir quando está sozinho?',
+    text: 'O que você acha que temos em comum?',
   },
   hostAnswer: 'O dia em que a gente se perdeu na cidade e encontramos aquele café escondido.',
   partnerAnswer: 'Nosso primeiro road trip — sem mapa, só música alta e conversa.',
@@ -27,44 +27,43 @@ export const LANDING_STEPS = [
   {
     step: '03',
     title: 'Respondam em segredo',
-    description: 'Cada um responde no seu tempo. Ninguém vê antes dos dois enviarem.',
+    description: 'Cada um no seu tempo. Ninguém vê a resposta do outro até os dois terminarem.',
   },
   {
     step: '04',
     title: 'Revelem juntos',
-    description: 'As respostas aparecem lado a lado. É aí que a conversa começa de verdade.',
+    description: 'Quando os dois concluírem, todas as respostas aparecem de uma vez.',
   },
 ];
 
 export const LANDING_SAMPLE_QUESTIONS = [
   {
-    categoryId: 'light',
+    categoryId: 'hobbies',
     type: 'SINGLE_CHOICE',
-    text: 'Se pudéssemos jantar em qualquer lugar do mundo hoje, onde seria?',
-    options: ['Praia no Nordeste', 'Bistrô em Paris', 'Ramen em Tóquio', 'Churrasco em casa'],
+    text: 'Você prefere praia ou montanha?',
+    options: ['Praia', 'Montanha', 'Os dois', 'Nenhum dos dois'],
   },
   {
-    categoryId: 'fun',
-    type: 'MULTIPLE_CHOICE',
-    text: 'Quais dessas coisas te definem bem?',
-    options: ['Cinéfilo', 'Cozinheiro de fim de semana', 'Aventureiro', 'Caseiro'],
-  },
-  {
-    categoryId: 'deep',
+    categoryId: 'relationship',
     type: 'TEXT',
-    text: 'O que você gostaria que mais pessoas soubessem sobre você?',
+    text: 'O que significa amar para você?',
+  },
+  {
+    categoryId: 'about_us',
+    type: 'TEXT',
+    text: 'Qual foi a sua primeira impressão sobre mim?',
   },
 ];
 
 export const LANDING_HIGHLIGHTS = [
   {
     title: 'Sem pressa',
-    description: 'Modo assíncrono: respondam quando der, no seu ritmo.',
+    description: 'No seu tempo: respondam quando der, cada um no próprio ritmo.',
     emoji: '🌙',
   },
   {
     title: 'Ao vivo',
-    description: 'Modo ao vivo: os dois online, o anfitrião conduz a sessão.',
+    description: 'Ao vivo: os dois online, pergunta a pergunta, com reveal na hora.',
     emoji: '⚡',
   },
   {

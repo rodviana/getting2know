@@ -4,13 +4,13 @@ public class HomeResponse {
 
     private final Long id;
     private final String name;
-    private final String email;
+    private final String username;
     private final String message;
 
-    public HomeResponse(Long id, String name, String email, String message) {
+    public HomeResponse(Long id, String name, String username, String message) {
         this.id = id;
         this.name = name;
-        this.email = email;
+        this.username = username;
         this.message = message;
     }
 
@@ -22,8 +22,8 @@ public class HomeResponse {
         return name;
     }
 
-    public String getEmail() {
-        return email;
+    public String getUsername() {
+        return username;
     }
 
     public String getMessage() {

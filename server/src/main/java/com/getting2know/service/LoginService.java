@@ -34,19 +34,19 @@ public class LoginService {
     public LoginResponse login(LoginRequest request) {
         UserValidationUtils.validateLoginRequest(request);
 
-        String email = request.getEmail().trim();
-        log.info("[login] attempt email={}", email);
+        String username = UserValidationUtils.normalizeUsername(request.getUsername());
+        log.info("[login] attempt username={}", username);
 
-        UserRecord user = authJdbcRepository.findByEmail(new UserEmailFilter(email))
+        UserRecord user = authJdbcRepository.findByEmail(new UserEmailFilter(username))
                 .orElseThrow(() -> GlobalException.of(ValidationMessageEnum.USER_NOT_FOUND));
 
         if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
-            log.warn("[login] invalid password email={}", user.getEmail());
+            log.warn("[login] invalid password username={}", user.getEmail());
             throw GlobalException.of(ValidationMessageEnum.INVALID_CREDENTIALS);
         }
 
         String token = jwtService.generate(user);
-        log.info("[login] OK email={}", user.getEmail());
+        log.info("[login] OK username={}", user.getEmail());
         return new LoginResponse(token, user.getName(), user.getEmail());
     }
 }

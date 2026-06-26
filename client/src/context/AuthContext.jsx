@@ -9,8 +9,9 @@ function loadSession() {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (!raw) return null;
     const parsed = JSON.parse(raw);
-    if (parsed?.token && parsed?.email) {
-      return parsed;
+    const username = parsed?.username ?? parsed?.email;
+    if (parsed?.token && username) {
+      return { ...parsed, username };
     }
   } catch {
     localStorage.removeItem(STORAGE_KEY);
@@ -28,7 +29,7 @@ export function AuthProvider({ children }) {
       const next = {
         token: sessionData.token,
         name: sessionData.name,
-        email: sessionData.email,
+        username: sessionData.username ?? sessionData.email,
       };
       localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
       setSession(next);

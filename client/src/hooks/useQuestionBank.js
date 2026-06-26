@@ -1,6 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useAuth } from '../context/AuthContext';
-import { BUILT_IN_QUESTIONS } from '../constants/questions';
 import { QuestionType, questionTypeNeedsOptions } from '../constants/questionTypes';
 import {
   createQuestion as createQuestionApi,
@@ -12,20 +11,20 @@ import {
 export function useQuestionBank() {
   const { session } = useAuth();
   const token = session?.token;
-  const [customQuestions, setCustomQuestions] = useState([]);
+  const [questions, setQuestions] = useState([]);
   const [loading, setLoading] = useState(true);
 
   const refresh = useCallback(async () => {
     if (!token) {
-      setCustomQuestions([]);
+      setQuestions([]);
       setLoading(false);
       return;
     }
     try {
       const data = await fetchQuestions(token);
-      setCustomQuestions(data || []);
+      setQuestions(data || []);
     } catch {
-      setCustomQuestions([]);
+      setQuestions([]);
     } finally {
       setLoading(false);
     }
@@ -35,10 +34,17 @@ export function useQuestionBank() {
     refresh();
   }, [refresh]);
 
-  const allQuestions = useMemo(
-    () => [...BUILT_IN_QUESTIONS, ...customQuestions],
-    [customQuestions],
+  const builtInQuestions = useMemo(
+    () => questions.filter((question) => !question.custom),
+    [questions],
   );
+
+  const customQuestions = useMemo(
+    () => questions.filter((question) => question.custom),
+    [questions],
+  );
+
+  const allQuestions = questions;
 
   const getQuestionById = useCallback(
     (id) => allQuestions.find((question) => question.id === id),
@@ -67,7 +73,7 @@ export function useQuestionBank() {
   }, [token, refresh]);
 
   return {
-    builtInQuestions: BUILT_IN_QUESTIONS,
+    builtInQuestions,
     customQuestions,
     allQuestions,
     loading,
@@ -85,7 +91,7 @@ function buildPayload(input) {
     : undefined;
 
   return {
-    categoryId: input.categoryId ?? 'light',
+    categoryId: input.categoryId ?? 'about_you',
     type,
     text: input.text.trim(),
     options,

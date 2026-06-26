@@ -221,6 +221,24 @@ docker exec -i getting2know-db psql -v ON_ERROR_STOP=1 -U postgres -d getting2kn
 
 Depois aplique as procedures em `server/src/main/resources/database/P_*.sql` na ordem numérica do `docker-compose.yml` (perguntas e sessões).
 
+### Perguntas padrão desatualizadas (ainda aparecem 122 em vez de 303)
+
+O Postgres só roda os scripts de `docker-entrypoint-initdb.d` na **primeira** criação do volume. Se o banco já existia antes da expansão da base, aplique a migration de atualização:
+
+```bash
+docker exec -i getting2know-db psql -v ON_ERROR_STOP=1 -U postgres -d getting2know \
+  < server/src/main/resources/database/V007_seed_default_questions.sql
+```
+
+Confira a contagem:
+
+```bash
+docker exec getting2know-db psql -U postgres -d getting2know \
+  -c "SELECT COUNT(*) FROM questions WHERE is_system = TRUE;"
+```
+
+Deve retornar **303**. As perguntas vêm da API (`GET /api/v1/questions`), não do front — o arquivo `builtInQuestionBank.js` só serve para gerar o SQL (`node scripts/generate-question-seed.mjs`).
+
 ### API reiniciando / erro de banco
 
 Espera o Postgres ficar saudável. Se continuar:

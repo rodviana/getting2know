@@ -35,22 +35,22 @@ public class RegisterService {
     public LoginResponse register(RegisterRequest request) {
         UserValidationUtils.validateRegisterRequest(request);
 
-        String email = request.getEmail().trim().toLowerCase();
-        log.info("[register] attempt email={}", email);
+        String username = UserValidationUtils.normalizeUsername(request.getUsername());
+        log.info("[register] attempt username={}", username);
 
-        if (authJdbcRepository.findByEmail(new UserEmailFilter(email)).isPresent()) {
-            throw GlobalException.of(ValidationMessageEnum.EMAIL_ALREADY_EXISTS);
+        if (authJdbcRepository.findByEmail(new UserEmailFilter(username)).isPresent()) {
+            throw GlobalException.of(ValidationMessageEnum.USERNAME_ALREADY_EXISTS);
         }
 
-        String name = UserValidationUtils.resolveDisplayName(request.getName(), email);
+        String name = UserValidationUtils.resolveDisplayName(request.getName(), username);
         String passwordHash = passwordEncoder.encode(request.getPassword());
 
-        Long userId = authJdbcRepository.createUser(new CreateUserFilter(email, passwordHash, name));
+        Long userId = authJdbcRepository.createUser(new CreateUserFilter(username, passwordHash, name));
         UserRecord user = authJdbcRepository.findById(new com.getting2know.repository.filter.UserIdLookupFilter(userId))
                 .orElseThrow(() -> GlobalException.of(ValidationMessageEnum.FAILED_CREATE_USER));
 
         String token = jwtService.generate(user);
-        log.info("[register] OK email={}", user.getEmail());
+        log.info("[register] OK username={}", user.getEmail());
         return new LoginResponse(token, user.getName(), user.getEmail());
     }
 }

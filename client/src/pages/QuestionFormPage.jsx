@@ -12,7 +12,7 @@ import { Card, FieldLabel, PageHeader, SelectInput, TextInput } from '../compone
 
 const EMPTY_FORM = {
   text: '',
-  categoryId: 'light',
+  categoryId: 'about_you',
   type: QuestionType.TEXT,
   options: ['', ''],
 };

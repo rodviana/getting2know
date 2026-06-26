@@ -8,6 +8,7 @@ import com.getting2know.model.request.JoinSessionRequest;
 import com.getting2know.model.request.SubmitAnswerRequest;
 import com.getting2know.model.response.CreateSessionResponse;
 import com.getting2know.model.response.HttpResponseEntityDTO;
+import com.getting2know.model.response.PreviouslyAskedQuestionsResponse;
 import com.getting2know.model.response.SessionListItemResponse;
 import com.getting2know.model.response.SessionResponse;
 import com.getting2know.service.SessionService;
@@ -24,6 +25,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -94,6 +96,28 @@ public class SessionController extends BaseController {
             response.setSuccess(true);
             response.setStatus(HttpStatus.OK.value());
             response.setMessage("Sessions loaded.");
+            return ResponseEntity.ok(response);
+        } catch (GlobalException e) {
+            return badRequest(e);
+        } catch (Exception e) {
+            return internalServerError(e, ValidationMessageEnum.UNEXPECTED_ERROR_SESSIONS);
+        }
+    }
+
+    @GetMapping(Getting2KnowControllerMapping.SESSIONS_PREVIOUSLY_ASKED)
+    @Operation(summary = "Previously asked questions",
+            description = "Returns question bank ids already used in sessions with a previous partner.")
+    public ResponseEntity<HttpResponseEntityDTO<?>> listPreviouslyAsked(Authentication authentication,
+                                                                       @RequestParam Long partnerUserId) {
+        HttpResponseEntityDTO<PreviouslyAskedQuestionsResponse> response = new HttpResponseEntityDTO<>();
+        try {
+            String email = requireEmail(authentication);
+            PreviouslyAskedQuestionsResponse data =
+                    sessionService.listPreviouslyAskedQuestions(email, partnerUserId);
+            response.setData(data);
+            response.setSuccess(true);
+            response.setStatus(HttpStatus.OK.value());
+            response.setMessage("Previously asked questions loaded.");
             return ResponseEntity.ok(response);
         } catch (GlobalException e) {
             return badRequest(e);

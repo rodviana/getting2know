@@ -19,6 +19,7 @@ public class SessionResponse {
     private final List<SessionQuestionResponse> questions;
     private final Map<String, Object> hostAnswers;
     private final Map<String, Object> partnerAnswers;
+    private final Map<String, Object> myAnswers;
     private final Object myCurrentAnswer;
     private final Object partnerCurrentAnswer;
     private final boolean waitingForPartner;
@@ -42,6 +43,7 @@ public class SessionResponse {
                            List<SessionQuestionResponse> questions,
                            Map<String, Object> hostAnswers,
                            Map<String, Object> partnerAnswers,
+                           Map<String, Object> myAnswers,
                            Object myCurrentAnswer,
                            Object partnerCurrentAnswer,
                            boolean waitingForPartner,
@@ -64,6 +66,7 @@ public class SessionResponse {
         this.questions = questions;
         this.hostAnswers = hostAnswers;
         this.partnerAnswers = partnerAnswers;
+        this.myAnswers = myAnswers;
         this.myCurrentAnswer = myCurrentAnswer;
         this.partnerCurrentAnswer = partnerCurrentAnswer;
         this.waitingForPartner = waitingForPartner;
@@ -128,6 +131,10 @@ public class SessionResponse {
 
     public Map<String, Object> getPartnerAnswers() {
         return partnerAnswers;
+    }
+
+    public Map<String, Object> getMyAnswers() {
+        return myAnswers;
     }
 
     public Object getMyCurrentAnswer() {

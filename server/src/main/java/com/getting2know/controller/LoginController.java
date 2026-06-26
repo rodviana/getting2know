@@ -35,12 +35,12 @@ public class LoginController extends BaseController {
     }
 
     @PostMapping(Getting2KnowControllerMapping.AUTH_LOGIN)
-    @Operation(summary = "Login", description = "Authenticates with email and password. Returns JWT for protected endpoints.")
+    @Operation(summary = "Login", description = "Authenticates with username and password. Returns JWT for protected endpoints.")
     public ResponseEntity<HttpResponseEntityDTO<?>> login(@RequestBody LoginRequest request) {
         HttpResponseEntityDTO<LoginResponse> response = new HttpResponseEntityDTO<>();
         try {
             LoginResponse data = loginService.login(request);
-            log.info("[login] OK email={}", data.getEmail());
+            log.info("[login] OK username={}", data.getUsername());
             response.setData(data);
             response.setSuccess(true);
             response.setStatus(HttpStatus.OK.value());
@@ -59,7 +59,7 @@ public class LoginController extends BaseController {
         HttpResponseEntityDTO<LoginResponse> response = new HttpResponseEntityDTO<>();
         try {
             LoginResponse data = registerService.register(request);
-            log.info("[register] OK email={}", data.getEmail());
+            log.info("[register] OK username={}", data.getUsername());
             response.setData(data);
             response.setSuccess(true);
             response.setStatus(HttpStatus.OK.value());

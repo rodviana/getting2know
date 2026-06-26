@@ -9,7 +9,7 @@ import { FieldLabel, TextInput } from '../components/ui/PageElements';
 export default function Login() {
   const navigate = useNavigate();
   const { login: saveSession } = useAuth();
-  const [email, setEmail] = useState('');
+  const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [name, setName] = useState('');
   const [loading, setLoading] = useState(false);
@@ -21,7 +21,7 @@ export default function Login() {
     setInlineError('');
     setLoading(true);
     try {
-      const data = await login(email.trim(), password, { showError: false });
+      const data = await login(username.trim(), password, { showError: false });
       saveSession(data);
       navigate('/home', { replace: true });
     } catch (error) {
@@ -44,7 +44,7 @@ export default function Login() {
     setInlineError('');
     setLoading(true);
     try {
-      const data = await register(email.trim(), password, name.trim(), { showError: false });
+      const data = await register(username.trim(), password, name.trim(), { showError: false });
       saveSession(data);
       navigate('/home', { replace: true });
     } catch (error) {
@@ -86,17 +86,17 @@ export default function Login() {
         >
           <h2 className="text-lg font-semibold text-slate-900">Entrar</h2>
           <p className="mt-1 mb-5 text-sm text-slate-500">
-            Só seu e-mail e senha. Se for a primeira vez, a gente te ajuda a criar a conta.
+            Escolha um usuário e senha. Se for a primeira vez, a gente te ajuda a criar a conta.
           </p>
 
           <div className="mb-4">
-            <FieldLabel htmlFor="email">E-mail</FieldLabel>
+            <FieldLabel htmlFor="username">Usuário</FieldLabel>
             <TextInput
-              id="email"
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="seu@email.com"
+              id="username"
+              type="text"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              placeholder="Ex.: rodrigo"
               autoComplete="username"
             />
           </div>
@@ -133,7 +133,7 @@ export default function Login() {
         open={registerOpen}
         onClose={closeRegisterModal}
         title="Primeira vez por aqui?"
-        description={`Não encontramos uma conta com ${email.trim() || 'este e-mail'}. Quer criar agora? É só confirmar — leva um instante.`}
+        description={`Não encontramos uma conta com "${username.trim() || 'este usuário'}". Quer criar agora? É só confirmar — leva um instante.`}
       >
         <form onSubmit={handleCreateAccount} className="space-y-4" noValidate>
           <div>

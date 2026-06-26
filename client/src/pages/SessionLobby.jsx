@@ -73,8 +73,8 @@ export default function SessionLobby() {
         title="Sala de espera"
         description={
           session.format === 'live'
-            ? 'Modo ao vivo: quando os dois estiverem aqui, o anfitrião inicia o questionário.'
-            : 'Compartilhe o código. Quando os dois estiverem aqui, comecem o questionário.'
+            ? 'Modo ao vivo: quando os dois estiverem aqui, o anfitrião inicia. Vocês respondem juntos, pergunta a pergunta.'
+            : 'Compartilhe o código. Quando os dois estiverem aqui, comecem — cada um responde no seu ritmo.'
         }
       />
 

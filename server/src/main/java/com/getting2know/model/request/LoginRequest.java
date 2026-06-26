@@ -5,18 +5,18 @@ import io.swagger.v3.oas.annotations.media.Schema;
 @Schema(description = "Login credentials")
 public class LoginRequest {
 
-    @Schema(example = "admin@getting2know.com")
-    private String email;
+    @Schema(example = "rodrigo")
+    private String username;
 
     @Schema(example = "admin123")
     private String password;
 
-    public String getEmail() {
-        return email;
+    public String getUsername() {
+        return username;
     }
 
-    public void setEmail(String email) {
-        this.email = email;
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     public String getPassword() {

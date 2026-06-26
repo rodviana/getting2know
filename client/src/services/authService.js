@@ -1,16 +1,16 @@
 import { apiRequest } from './apiClient';
 
-export async function login(email, password, options = {}) {
+export async function login(username, password, options = {}) {
   return apiRequest('/api/v1/auth/login', {
     method: 'POST',
-    body: JSON.stringify({ email, password }),
+    body: JSON.stringify({ username, password }),
   }, options);
 }
 
-export async function register(email, password, name, options = {}) {
+export async function register(username, password, name, options = {}) {
   return apiRequest('/api/v1/auth/register', {
     method: 'POST',
-    body: JSON.stringify({ email, password, name: name || undefined }),
+    body: JSON.stringify({ username, password, name: name || undefined }),
   }, options);
 }
 

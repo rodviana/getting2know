@@ -10,6 +10,7 @@ public class QuestionRecord {
     private final String type;
     private final String text;
     private final String optionsJson;
+    private final boolean system;
     private final LocalDateTime createdAt;
     private final LocalDateTime updatedAt;
 
@@ -19,6 +20,7 @@ public class QuestionRecord {
                           String type,
                           String text,
                           String optionsJson,
+                          boolean system,
                           LocalDateTime createdAt,
                           LocalDateTime updatedAt) {
         this.id = id;
@@ -27,6 +29,7 @@ public class QuestionRecord {
         this.type = type;
         this.text = text;
         this.optionsJson = optionsJson;
+        this.system = system;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
     }
@@ -53,6 +56,10 @@ public class QuestionRecord {
 
     public String getOptionsJson() {
         return optionsJson;
+    }
+
+    public boolean isSystem() {
+        return system;
     }
 
     public LocalDateTime getCreatedAt() {

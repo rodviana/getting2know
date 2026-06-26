@@ -46,7 +46,7 @@ export default function Layout() {
               </div>
               <div className="text-right">
                 <p className="text-sm font-medium text-slate-900">{session?.name}</p>
-                <p className="text-xs text-slate-500">{session?.email}</p>
+                <p className="text-xs text-slate-500">{session?.username}</p>
               </div>
             </div>
             <button type="button" onClick={logout} className="btn-secondary px-3 py-2">

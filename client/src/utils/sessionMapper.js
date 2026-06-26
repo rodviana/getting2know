@@ -4,5 +4,6 @@ export function mapSession(data) {
     ...data,
     answers: data.hostAnswers || {},
     partnerAnswers: data.partnerAnswers || {},
+    myAnswers: data.myAnswers || {},
   };
 }

@@ -17,6 +17,9 @@ services:
       - ./server/src/main/resources/database/V002_seed_demo.sql:/docker-entrypoint-initdb.d/30-V002_seed_demo.sql:ro
       - ./server/src/main/resources/database/V003_schema_questions_sessions.sql:/docker-entrypoint-initdb.d/40-V003_schema_questions_sessions.sql:ro
       - ./server/src/main/resources/database/V004_session_format.sql:/docker-entrypoint-initdb.d/41-V004_session_format.sql:ro
+      - ./server/src/main/resources/database/V005_system_questions.sql:/docker-entrypoint-initdb.d/42-V005_system_questions.sql:ro
+      - ./server/src/main/resources/database/V006_seed_default_questions.sql:/docker-entrypoint-initdb.d/43-V006_seed_default_questions.sql:ro
+      - ./server/src/main/resources/database/V007_seed_default_questions.sql:/docker-entrypoint-initdb.d/44-V007_seed_default_questions.sql:ro
       - ./server/src/main/resources/database/P_LIST_QUESTIONS_BY_USER_ID.sql:/docker-entrypoint-initdb.d/50-P_LIST_QUESTIONS_BY_USER_ID.sql:ro
       - ./server/src/main/resources/database/P_FIND_QUESTION_BY_ID.sql:/docker-entrypoint-initdb.d/51-P_FIND_QUESTION_BY_ID.sql:ro
       - ./server/src/main/resources/database/P_CREATE_QUESTION.sql:/docker-entrypoint-initdb.d/52-P_CREATE_QUESTION.sql:ro
@@ -33,6 +36,7 @@ services:
       - ./server/src/main/resources/database/P_LIST_SESSION_ANSWERS.sql:/docker-entrypoint-initdb.d/68-P_LIST_SESSION_ANSWERS.sql:ro
       - ./server/src/main/resources/database/P_COUNT_ANSWERS_FOR_QUESTION.sql:/docker-entrypoint-initdb.d/69-P_COUNT_ANSWERS_FOR_QUESTION.sql:ro
       - ./server/src/main/resources/database/P_LIST_USER_PAIR_SESSIONS.sql:/docker-entrypoint-initdb.d/70-P_LIST_USER_PAIR_SESSIONS.sql:ro
+      - ./server/src/main/resources/database/P_LIST_PREVIOUSLY_ASKED_QUESTION_REFS.sql:/docker-entrypoint-initdb.d/71-P_LIST_PREVIOUSLY_ASKED_QUESTION_REFS.sql:ro
     networks:
       - getting2know
     healthcheck:

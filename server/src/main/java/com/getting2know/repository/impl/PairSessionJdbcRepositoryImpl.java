@@ -15,6 +15,7 @@ import com.getting2know.repository.filter.SessionIdFilter;
 import com.getting2know.repository.filter.UpdateSessionStatusFilter;
 import com.getting2know.repository.filter.UpsertSessionAnswerFilter;
 import com.getting2know.repository.filter.UserIdFilter;
+import com.getting2know.repository.filter.UserPairFilter;
 import com.getting2know.repository.mapper.PairSessionRowMapper;
 import com.getting2know.repository.mapper.SessionAnswerRowMapper;
 import com.getting2know.repository.mapper.SessionQuestionRowMapper;
@@ -190,6 +191,23 @@ public class PairSessionJdbcRepositoryImpl implements PairSessionJdbcRepository 
             return jdbc.query(P_LIST_USER_PAIR_SESSIONS, params, UserSessionListRowMapper.INSTANCE);
         } catch (DataAccessException e) {
             log.error("[sessions] list user sessions error userId={}: {}", filter.getUserId(), e.getMessage(), e);
+            throw GlobalException.of(ValidationMessageEnum.FAILED_LOAD_SESSION);
+        }
+    }
+
+    @Override
+    public List<String> listPreviouslyAskedQuestionRefs(UserPairFilter filter) {
+        MapSqlParameterSource params = new MapSqlParameterSource()
+                .addValue("userId", filter.getUserId())
+                .addValue("partnerUserId", filter.getPartnerUserId());
+        try {
+            return jdbc.query(
+                    P_LIST_PREVIOUSLY_ASKED_QUESTION_REFS,
+                    params,
+                    (rs, rowNum) -> rs.getString("source_ref"));
+        } catch (DataAccessException e) {
+            log.error("[sessions] list previously asked error userId={} partnerUserId={}: {}",
+                    filter.getUserId(), filter.getPartnerUserId(), e.getMessage(), e);
             throw GlobalException.of(ValidationMessageEnum.FAILED_LOAD_SESSION);
         }
     }

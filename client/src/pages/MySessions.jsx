@@ -102,6 +102,14 @@ export default function MySessions() {
                   </div>
 
                   <div className="flex shrink-0 flex-wrap gap-2">
+                    {item.otherUserId && (
+                      <Link
+                        to={`/sessions/new?partnerId=${item.otherUserId}`}
+                        className="btn-ghost px-3 py-2 text-sm"
+                      >
+                        Nova com {otherName.split(' ')[0]}
+                      </Link>
+                    )}
                     {answered > 0 && (
                       <Link
                         to={`/sessions/${item.code}/history`}

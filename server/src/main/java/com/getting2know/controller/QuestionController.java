@@ -41,7 +41,7 @@ public class QuestionController extends BaseController {
     }
 
     @GetMapping
-    @Operation(summary = "List custom questions", description = "Returns authenticated user's custom questions.")
+    @Operation(summary = "List questions", description = "Returns system default questions and the authenticated user's custom questions.")
     public ResponseEntity<HttpResponseEntityDTO<?>> list(Authentication authentication) {
         HttpResponseEntityDTO<List<QuestionResponse>> response = new HttpResponseEntityDTO<>();
         try {
@@ -120,7 +120,7 @@ public class QuestionController extends BaseController {
     }
 
     private Long parseQuestionId(String id) {
-        if (id == null || id.isBlank()) {
+        if (id == null || id.isBlank() || id.startsWith("builtin-")) {
             throw GlobalException.of(ValidationMessageEnum.QUESTION_NOT_FOUND);
         }
         String normalized = id.startsWith("custom-") ? id.substring("custom-".length()) : id;

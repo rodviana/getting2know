@@ -14,6 +14,7 @@ import com.getting2know.model.request.JoinSessionRequest;
 import com.getting2know.model.request.SessionQuestionItemRequest;
 import com.getting2know.model.request.SubmitAnswerRequest;
 import com.getting2know.model.response.CreateSessionResponse;
+import com.getting2know.model.response.PreviouslyAskedQuestionsResponse;
 import com.getting2know.model.response.SessionListItemResponse;
 import com.getting2know.model.response.SessionProgressResponse;
 import com.getting2know.model.response.SessionQuestionResponse;
@@ -31,6 +32,7 @@ import com.getting2know.repository.filter.UpsertSessionAnswerFilter;
 import com.getting2know.repository.filter.UserEmailFilter;
 import com.getting2know.repository.filter.UserIdFilter;
 import com.getting2know.repository.filter.UserIdLookupFilter;
+import com.getting2know.repository.filter.UserPairFilter;
 import com.getting2know.utils.JsonUtils;
 import com.getting2know.utils.QuestionValidationUtils;
 import com.getting2know.utils.SessionValidationUtils;
@@ -132,6 +134,33 @@ public class SessionService {
                 .collect(Collectors.toList());
     }
 
+    public PreviouslyAskedQuestionsResponse listPreviouslyAskedQuestions(String email, Long partnerUserId) {
+        UserRecord user = requireUser(email);
+        if (partnerUserId == null || Objects.equals(partnerUserId, user.getId())) {
+            throw GlobalException.of(ValidationMessageEnum.SESSION_PARTNER_UNKNOWN);
+        }
+
+        List<UserSessionListRecord> sessions = pairSessionJdbcRepository.listByUserId(new UserIdFilter(user.getId()));
+        List<UserSessionListRecord> sharedSessions = sessions.stream()
+                .filter(record -> record.getPartnerUserId() != null)
+                .filter(record -> isSharedWith(record, user.getId(), partnerUserId))
+                .collect(Collectors.toList());
+
+        if (sharedSessions.isEmpty()) {
+            throw GlobalException.of(ValidationMessageEnum.SESSION_PARTNER_UNKNOWN);
+        }
+
+        String partnerName = resolvePartnerName(sharedSessions.get(0), user.getId(), partnerUserId);
+        List<String> questionIds = pairSessionJdbcRepository.listPreviouslyAskedQuestionRefs(
+                new UserPairFilter(user.getId(), partnerUserId));
+
+        return new PreviouslyAskedQuestionsResponse(
+                partnerUserId,
+                partnerName,
+                questionIds,
+                sharedSessions.size());
+    }
+
     public SessionResponse startSession(String email, String code) {
         UserRecord currentUser = requireUser(email);
         PairSessionRecord session = requireSession(code);
@@ -161,6 +190,19 @@ public class SessionService {
             throw GlobalException.of(ValidationMessageEnum.SESSION_INVALID_STATUS);
         }
 
+        SessionFormatEnum format = SessionFormatEnum.fromCode(session.getFormat());
+        if (format == SessionFormatEnum.ASYNC) {
+            return submitAsyncAnswer(session, currentUser, request, email, code);
+        }
+
+        return submitLiveAnswer(session, currentUser, request, email, code);
+    }
+
+    private SessionResponse submitLiveAnswer(PairSessionRecord session,
+                                           UserRecord currentUser,
+                                           SubmitAnswerRequest request,
+                                           String email,
+                                           String code) {
         List<SessionQuestionRecord> questions = pairSessionJdbcRepository.listQuestions(new SessionIdFilter(session.getId()));
         if (session.getCurrentIndex() >= questions.size()) {
             throw GlobalException.of(ValidationMessageEnum.SESSION_INVALID_STATUS);
@@ -203,10 +245,73 @@ public class SessionService {
         return getSession(email, code);
     }
 
+    private SessionResponse submitAsyncAnswer(PairSessionRecord session,
+                                              UserRecord currentUser,
+                                              SubmitAnswerRequest request,
+                                              String email,
+                                              String code) {
+        List<SessionQuestionRecord> questions = pairSessionJdbcRepository.listQuestions(new SessionIdFilter(session.getId()));
+        if (request == null || request.getQuestionId() == null) {
+            throw GlobalException.of(ValidationMessageEnum.SESSION_INVALID_STATUS);
+        }
+
+        SessionQuestionRecord targetQuestion = questions.stream()
+                .filter(question -> String.valueOf(question.getId()).equals(request.getQuestionId()))
+                .findFirst()
+                .orElseThrow(() -> GlobalException.of(ValidationMessageEnum.SESSION_INVALID_STATUS));
+
+        List<SessionAnswerRecord> answers = pairSessionJdbcRepository.listAnswers(new SessionIdFilter(session.getId()));
+        boolean alreadyAnswered = answers.stream()
+                .anyMatch(answer -> answer.getSessionQuestionId().equals(targetQuestion.getId())
+                        && answer.getUserId().equals(currentUser.getId()));
+        if (alreadyAnswered) {
+            throw GlobalException.of(ValidationMessageEnum.SESSION_ALREADY_ANSWERED);
+        }
+
+        QuestionTypeEnum type = QuestionTypeEnum.fromCode(targetQuestion.getType());
+        QuestionValidationUtils.validateAnswer(request, type);
+
+        pairSessionJdbcRepository.upsertAnswer(new UpsertSessionAnswerFilter(
+                session.getId(),
+                targetQuestion.getId(),
+                currentUser.getId(),
+                JsonUtils.toJson(request.getAnswer())));
+
+        List<SessionAnswerRecord> updatedAnswers = pairSessionJdbcRepository.listAnswers(new SessionIdFilter(session.getId()));
+        int total = questions.size();
+        int hostAnswered = countDistinctAnswers(updatedAnswers, session.getHostUserId());
+        int partnerAnswered = session.getPartnerUserId() != null
+                ? countDistinctAnswers(updatedAnswers, session.getPartnerUserId())
+                : 0;
+
+        if (hostAnswered >= total && partnerAnswered >= total) {
+            pairSessionJdbcRepository.updateStatus(new UpdateSessionStatusFilter(
+                    session.getId(),
+                    SessionStatusEnum.FINISHED.getCode(),
+                    session.getCurrentIndex(),
+                    LocalDateTime.now()));
+        }
+
+        return getSession(email, code);
+    }
+
+    private int countDistinctAnswers(List<SessionAnswerRecord> answers, Long userId) {
+        return (int) answers.stream()
+                .filter(answer -> answer.getUserId().equals(userId))
+                .map(SessionAnswerRecord::getSessionQuestionId)
+                .distinct()
+                .count();
+    }
+
     public SessionResponse nextQuestion(String email, String code) {
         UserRecord currentUser = requireUser(email);
         PairSessionRecord session = requireSession(code);
         requireParticipant(session, currentUser.getId());
+
+        SessionFormatEnum format = SessionFormatEnum.fromCode(session.getFormat());
+        if (format == SessionFormatEnum.ASYNC) {
+            throw GlobalException.of(ValidationMessageEnum.SESSION_INVALID_STATUS);
+        }
 
         if (!SessionStatusEnum.REVEAL.getCode().equals(session.getStatus())) {
             throw GlobalException.of(ValidationMessageEnum.SESSION_INVALID_STATUS);
@@ -262,7 +367,7 @@ public class SessionService {
         int answeredPairs = 0;
         for (int index = 0; index < questionRecords.size(); index += 1) {
             SessionQuestionRecord question = questionRecords.get(index);
-            boolean revealed = isQuestionRevealed(index, session.getCurrentIndex(), status);
+            boolean revealed = isQuestionRevealed(index, session.getCurrentIndex(), status, format);
             if (!revealed) {
                 continue;
             }
@@ -284,6 +389,24 @@ public class SessionService {
             }
         }
 
+        Map<String, Object> myAnswers = new HashMap<>();
+        for (SessionQuestionRecord question : questionRecords) {
+            Object answer = answersByQuestionAndUser.get(answerKey(question.getId(), currentUser.getId()));
+            if (answer != null) {
+                myAnswers.put(String.valueOf(question.getId()), answer);
+            }
+        }
+
+        int myAnswered = countDistinctAnswers(answerRecords, currentUser.getId());
+        Long partnerUserId = session.getPartnerUserId() != null
+                ? (Objects.equals(currentUser.getId(), session.getHostUserId())
+                ? session.getPartnerUserId()
+                : session.getHostUserId())
+                : null;
+        int partnerAnswered = partnerUserId != null
+                ? countDistinctAnswers(answerRecords, partnerUserId)
+                : 0;
+
         SessionQuestionRecord currentQuestion = session.getCurrentIndex() < questionRecords.size()
                 ? questionRecords.get(session.getCurrentIndex())
                 : null;
@@ -297,21 +420,25 @@ public class SessionService {
             myCurrentAnswer = answersByQuestionAndUser.get(answerKey(currentQuestion.getId(), currentUser.getId()));
             iAnsweredCurrent = myCurrentAnswer != null;
 
-            if (session.getPartnerUserId() != null) {
-                Long partnerUserId = Objects.equals(currentUser.getId(), session.getHostUserId())
-                        ? session.getPartnerUserId()
-                        : session.getHostUserId();
+            if (session.getPartnerUserId() != null && partnerUserId != null) {
                 partnerCurrentAnswer = answersByQuestionAndUser.get(answerKey(currentQuestion.getId(), partnerUserId));
                 partnerAnsweredCurrent = partnerCurrentAnswer != null;
             }
 
-            if (status != SessionStatusEnum.REVEAL) {
+            if (status != SessionStatusEnum.REVEAL || format == SessionFormatEnum.ASYNC) {
                 partnerCurrentAnswer = null;
             }
         }
 
-        boolean waitingForPartner = status == SessionStatusEnum.PLAYING && iAnsweredCurrent && !partnerAnsweredCurrent;
         int total = questionRecords.size();
+        boolean waitingForPartner;
+        if (format == SessionFormatEnum.ASYNC) {
+            waitingForPartner = status == SessionStatusEnum.PLAYING
+                    && myAnswered >= total
+                    && partnerAnswered < total;
+        } else {
+            waitingForPartner = status == SessionStatusEnum.PLAYING && iAnsweredCurrent && !partnerAnsweredCurrent;
+        }
         int current = total == 0 ? 0 : Math.min(session.getCurrentIndex() + 1, total);
 
         List<SessionQuestionResponse> questions = questionRecords.stream()
@@ -333,6 +460,7 @@ public class SessionService {
                 questions,
                 hostAnswers,
                 partnerAnswers,
+                myAnswers,
                 myCurrentAnswer,
                 partnerCurrentAnswer,
                 waitingForPartner,
@@ -340,11 +468,14 @@ public class SessionService {
                 partnerAnsweredCurrent,
                 formatDateTime(session.getCreatedAt()),
                 formatDateTime(session.getFinishedAt()),
-                new SessionProgressResponse(current, total, answeredPairs));
+                new SessionProgressResponse(current, total, answeredPairs, myAnswered, partnerAnswered));
     }
 
     private SessionListItemResponse toListItem(UserSessionListRecord record, Long userId) {
         String role = Objects.equals(record.getHostUserId(), userId) ? "host" : "partner";
+        Long otherUserId = Objects.equals(record.getHostUserId(), userId)
+                ? record.getPartnerUserId()
+                : record.getHostUserId();
         return new SessionListItemResponse(
                 record.getCode(),
                 SessionStatusEnum.fromCode(record.getStatus()).getCode().toLowerCase(),
@@ -354,10 +485,28 @@ public class SessionService {
                 record.getPartnerName(),
                 record.getHostEmail(),
                 record.getPartnerEmail(),
+                otherUserId,
                 formatDateTime(record.getCreatedAt()),
                 formatDateTime(record.getFinishedAt()),
                 record.getQuestionCount(),
                 record.getAnsweredPairs());
+    }
+
+    private boolean isSharedWith(UserSessionListRecord record, Long userId, Long partnerUserId) {
+        return (Objects.equals(record.getHostUserId(), userId)
+                && Objects.equals(record.getPartnerUserId(), partnerUserId))
+                || (Objects.equals(record.getHostUserId(), partnerUserId)
+                && Objects.equals(record.getPartnerUserId(), userId));
+    }
+
+    private String resolvePartnerName(UserSessionListRecord record, Long userId, Long partnerUserId) {
+        if (Objects.equals(record.getHostUserId(), partnerUserId)) {
+            return record.getHostName() != null ? record.getHostName() : "Parceiro";
+        }
+        if (Objects.equals(record.getPartnerUserId(), partnerUserId)) {
+            return record.getPartnerName() != null ? record.getPartnerName() : "Parceiro";
+        }
+        return "Parceiro";
     }
 
     private SessionQuestionResponse toQuestionResponse(SessionQuestionRecord record) {
@@ -373,7 +522,13 @@ public class SessionService {
                 options.isEmpty() ? null : options);
     }
 
-    private boolean isQuestionRevealed(int questionIndex, int currentIndex, SessionStatusEnum status) {
+    private boolean isQuestionRevealed(int questionIndex,
+                                       int currentIndex,
+                                       SessionStatusEnum status,
+                                       SessionFormatEnum format) {
+        if (format == SessionFormatEnum.ASYNC) {
+            return status == SessionStatusEnum.FINISHED;
+        }
         if (questionIndex < currentIndex) {
             return true;
         }

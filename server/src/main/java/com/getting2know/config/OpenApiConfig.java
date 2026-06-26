@@ -21,7 +21,7 @@ public class OpenApiConfig {
                         .description(
                                 "Interactive API documentation.\n\n"
                                         + "How to test protected endpoints:\n"
-                                        + "1. Run POST /api/v1/auth/login with email and password.\n"
+                                        + "1. Run POST /api/v1/auth/login with username and password.\n"
                                         + "2. Copy the token from the response.\n"
                                         + "3. Click Authorize and enter: Bearer <token>.")
                         .version("v1")

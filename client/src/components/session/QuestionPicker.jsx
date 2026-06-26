@@ -13,6 +13,11 @@ export default function QuestionPicker({
   const [typeFilter, setTypeFilter] = useState('all');
   const [search, setSearch] = useState('');
 
+  const availableCategories = useMemo(() => {
+    const ids = new Set(questions.map((question) => question.categoryId));
+    return CATEGORIES.filter((category) => ids.has(category.id));
+  }, [questions]);
+
   const filtered = useMemo(() => {
     return questions.filter((question) => {
       if (categoryFilter !== 'all' && question.categoryId !== categoryFilter) return false;
@@ -73,7 +78,7 @@ export default function QuestionPicker({
           className="select-field"
         >
           <option value="all">Todas as categorias</option>
-          {CATEGORIES.map((category) => (
+          {availableCategories.map((category) => (
             <option key={category.id} value={category.id}>{category.title}</option>
           ))}
         </select>

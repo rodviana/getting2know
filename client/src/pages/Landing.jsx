@@ -191,7 +191,7 @@ export default function Landing() {
                 </a>
               </div>
               <p className="mt-4 text-sm text-slate-500">
-                Entre com e-mail e senha. Se for sua primeira vez, criamos sua conta na hora.
+                Entre com usuário e senha. Se for sua primeira vez, criamos sua conta na hora.
               </p>
             </div>
 
@@ -237,7 +237,7 @@ export default function Landing() {
                 </li>
                 <li className="flex gap-2">
                   <span className="text-rose-500" aria-hidden="true">✓</span>
-                  Escolha modo assíncrono ou ao vivo na criação
+                  Escolha «No seu tempo» ou «Ao vivo» na criação
                 </li>
                 <li className="flex gap-2">
                   <span className="text-rose-500" aria-hidden="true">✓</span>

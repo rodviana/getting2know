@@ -22,6 +22,15 @@ export async function fetchMySessions(token) {
   return apiRequest('/api/v1/sessions/mine', { method: 'GET' }, { token, showError: false });
 }
 
+export async function fetchPreviouslyAskedQuestions(partnerUserId, token) {
+  const params = new URLSearchParams({ partnerUserId: String(partnerUserId) });
+  return apiRequest(
+    `/api/v1/sessions/previously-asked?${params}`,
+    { method: 'GET' },
+    { token, showError: false },
+  );
+}
+
 export async function startSession(code, token) {
   return apiRequest(`/api/v1/sessions/${code}/start`, { method: 'POST' }, { token });
 }

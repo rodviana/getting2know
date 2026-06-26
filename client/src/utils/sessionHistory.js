@@ -26,9 +26,10 @@ export function getSessionPrimaryLink(session) {
   return `/sessions/${code}/play`;
 }
 
-export function getOtherParticipantName(session, role) {
-  if (role === 'host') return session.partnerName || 'Aguardando parceiro';
-  return session.hostName || 'Anfitrião';
+export function getOtherParticipantName(session, role = session?.role) {
+  if (role === 'host') return session?.partnerName || 'Aguardando parceiro';
+  if (role === 'partner') return session?.hostName || 'Anfitrião';
+  return session?.partnerName || session?.hostName || 'Parceiro';
 }
 
 export function isSessionActive(status) {

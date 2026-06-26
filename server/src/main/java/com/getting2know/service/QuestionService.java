@@ -50,7 +50,7 @@ public class QuestionService {
         String optionsJson = type.needsOptions() ? JsonUtils.toJson(options) : null;
         String categoryId = request.getCategoryId() != null && !request.getCategoryId().isBlank()
                 ? request.getCategoryId().trim()
-                : "light";
+                : "about_you";
 
         Long id = questionJdbcRepository.create(new CreateQuestionFilter(
                 user.getId(),
@@ -74,7 +74,7 @@ public class QuestionService {
         String optionsJson = type.needsOptions() ? JsonUtils.toJson(options) : null;
         String categoryId = request.getCategoryId() != null && !request.getCategoryId().isBlank()
                 ? request.getCategoryId().trim()
-                : "light";
+                : "about_you";
 
         questionJdbcRepository.update(new UpdateQuestionFilter(
                 questionId,
@@ -104,12 +104,14 @@ public class QuestionService {
         List<String> options = type.needsOptions()
                 ? JsonUtils.parseStringList(record.getOptionsJson())
                 : Collections.emptyList();
+        boolean isCustom = !record.isSystem();
+        String externalId = (record.isSystem() ? "builtin-" : "custom-") + record.getId();
         return new QuestionResponse(
-                "custom-" + record.getId(),
+                externalId,
                 record.getCategoryId(),
                 record.getType(),
                 record.getText(),
                 options.isEmpty() ? null : options,
-                true);
+                isCustom);
     }
 }

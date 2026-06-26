@@ -5,6 +5,7 @@ CREATE TABLE IF NOT EXISTS questions (
     type        VARCHAR(30) NOT NULL,
     text        TEXT NOT NULL,
     options     JSONB,
+    is_system   BOOLEAN NOT NULL DEFAULT FALSE,
     created_at  TIMESTAMP NOT NULL DEFAULT NOW(),
     updated_at  TIMESTAMP NOT NULL DEFAULT NOW()
 );

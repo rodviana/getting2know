@@ -10,6 +10,7 @@ public class SessionListItemResponse {
     private final String partnerName;
     private final String hostEmail;
     private final String partnerEmail;
+    private final Long otherUserId;
     private final String createdAt;
     private final String finishedAt;
     private final int questionCount;
@@ -23,6 +24,7 @@ public class SessionListItemResponse {
                                    String partnerName,
                                    String hostEmail,
                                    String partnerEmail,
+                                   Long otherUserId,
                                    String createdAt,
                                    String finishedAt,
                                    int questionCount,
@@ -35,6 +37,7 @@ public class SessionListItemResponse {
         this.partnerName = partnerName;
         this.hostEmail = hostEmail;
         this.partnerEmail = partnerEmail;
+        this.otherUserId = otherUserId;
         this.createdAt = createdAt;
         this.finishedAt = finishedAt;
         this.questionCount = questionCount;
@@ -71,6 +74,10 @@ public class SessionListItemResponse {
 
     public String getPartnerEmail() {
         return partnerEmail;
+    }
+
+    public Long getOtherUserId() {
+        return otherUserId;
     }
 
     public String getCreatedAt() {

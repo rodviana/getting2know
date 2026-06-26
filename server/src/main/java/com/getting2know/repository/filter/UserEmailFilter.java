@@ -2,6 +2,8 @@ package com.getting2know.repository.filter;
 
 import com.getting2know.model.request.LoginRequest;
 
+import com.getting2know.utils.UserValidationUtils;
+
 public class UserEmailFilter {
 
     private String email;
@@ -11,7 +13,7 @@ public class UserEmailFilter {
     }
 
     public UserEmailFilter(LoginRequest request) {
-        this.email = request.getEmail().trim();
+        this.email = UserValidationUtils.normalizeUsername(request.getUsername());
     }
 
     public String getEmail() {
