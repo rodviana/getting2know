@@ -14,6 +14,7 @@ import {
 import { showApiError } from '../services/apiClient';
 import { getSessionFormatLabel } from '../utils/sessionFormat';
 import { getSessionStatusLabel } from '../utils/sessionHistory';
+import { BRASILIA_TIMEZONE_LABEL, formatDateTimeBrasilia } from '../utils/dateTime';
 import { Card, LoadingCard } from '../components/ui/PageElements';
 
 const TABS = [
@@ -37,8 +38,7 @@ function StatCard({ label, value, hint }) {
 }
 
 function formatDate(value) {
-  if (!value) return '—';
-  return new Date(value).toLocaleString('pt-BR');
+  return formatDateTimeBrasilia(value);
 }
 
 function formatPercent(value) {
@@ -536,11 +536,12 @@ export default function Admin() {
               />
               <button type="submit" className="btn-primary px-4 py-2 text-sm">Filtrar</button>
             </form>
+            <p className="text-sm text-slate-500">{BRASILIA_TIMEZONE_LABEL}</p>
             <Card className={`overflow-x-auto transition-opacity ${eventsLoading ? 'opacity-60' : ''}`}>
               <table className="min-w-full text-left text-sm">
                 <thead>
                   <tr className="border-b border-slate-200 text-slate-500">
-                    <th className="px-3 py-2">Quando</th>
+                    <th className="px-3 py-2">Quando (BRT)</th>
                     <th className="px-3 py-2">Tipo</th>
                     <th className="px-3 py-2">Usuário</th>
                     <th className="px-3 py-2">IP</th>
