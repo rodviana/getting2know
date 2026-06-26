@@ -1,9 +1,13 @@
 import { writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { BUILT_IN_QUESTIONS } from '../client/src/constants/builtInQuestionBank.js';
+import { execSync } from 'node:child_process';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
+execSync('node scripts/build-question-bank.mjs', { cwd: root, stdio: 'inherit' });
+
+const { BUILT_IN_QUESTIONS } = await import('../client/src/constants/builtInQuestionBank.js');
+
 const databaseDir = join(root, 'server/src/main/resources/database');
 
 function esc(value) {

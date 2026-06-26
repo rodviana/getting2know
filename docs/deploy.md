@@ -194,6 +194,13 @@ docker compose -f docker-compose.prod.yml --env-file .env.prod up --build -d
 
 Painel: **https://getting2know.com.br/admin** — login `admin` / senha configurada no seed.
 
+Se a release expandir o **banco de perguntas** (2000+), aplique no Postgres existente:
+
+```bash
+bash scripts/apply-question-bank-upgrade.sh
+docker compose -f docker-compose.prod.yml --env-file .env.prod up --build -d
+```
+
 ---
 
 ## Comandos úteis

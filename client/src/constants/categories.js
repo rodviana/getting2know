@@ -32,7 +32,7 @@ export const CATEGORIES = [
   {
     id: 'relationship',
     title: 'Relacionamento',
-    description: 'Amor, parceria e conexão.',
+    description: 'Romance, parceria e vínculo afetivo.',
     emoji: '💕',
   },
   {
@@ -80,7 +80,7 @@ export const CATEGORIES = [
   {
     id: 'home_routine',
     title: 'Casa e rotina',
-    description: 'Lar, tarefas e dia a dia a dois.',
+    description: 'Lar, tarefas e dia a dia.',
     emoji: '🏠',
   },
   {
@@ -110,14 +110,74 @@ export const CATEGORIES = [
   {
     id: 'hypotheticals',
     title: 'Hipóteses',
-    description: 'Cenários imaginários para se conhecerem.',
+    description: 'Cenários imaginários para puxar assunto.',
     emoji: '✨',
   },
   {
     id: 'about_us',
     title: 'Sobre nós',
-    description: 'O que vocês dois têm em comum — e o que não têm.',
-    emoji: '💑',
+    description: 'A dupla de vocês — memórias e impressões.',
+    emoji: '👥',
+  },
+  {
+    id: 'us_general',
+    title: 'Nossa dupla',
+    description: 'Dinâmica de vocês, sem assumir romance.',
+    emoji: '🔗',
+  },
+  {
+    id: 'us_friends',
+    title: 'Nossa amizade',
+    description: 'O que vocês dois compartilham como amigos.',
+    emoji: '🫂',
+  },
+  {
+    id: 'us_coworkers',
+    title: 'No trabalho',
+    description: 'Parceria profissional e rotina de equipe.',
+    emoji: '🏢',
+  },
+  {
+    id: 'us_roommates',
+    title: 'Morando juntos',
+    description: 'Casa, convivência e rotina compartilhada.',
+    emoji: '🛋️',
+  },
+  {
+    id: 'us_siblings',
+    title: 'Entre irmãos',
+    description: 'História, diferenças e laço fraternal.',
+    emoji: '👫',
+  },
+  {
+    id: 'us_parent_child',
+    title: 'Pais e filhos',
+    description: 'Vínculo entre gerações.',
+    emoji: '🧑‍🧒',
+  },
+  {
+    id: 'us_neighbors',
+    title: 'Vizinhança',
+    description: 'Convivência no bairro e no prédio.',
+    emoji: '🏘️',
+  },
+  {
+    id: 'us_classmates',
+    title: 'Colegas de turma',
+    description: 'Escola, faculdade e vida acadêmica.',
+    emoji: '🎓',
+  },
+  {
+    id: 'us_teammates',
+    title: 'Time e grupo',
+    description: 'Esporte, projeto ou grupo fechado.',
+    emoji: '⚽',
+  },
+  {
+    id: 'us_romantic',
+    title: 'Romance',
+    description: 'Vínculo afetivo e expectativas a dois.',
+    emoji: '❤️',
   },
   // Legado — sessões antigas podem usar estas categorias
   {

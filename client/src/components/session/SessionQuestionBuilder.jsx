@@ -6,7 +6,7 @@ import {
   formatPackSubtitle,
   isCustomPackFullySelected,
   isPackFullySelected,
-  PACK_AUDIENCE,
+  getPackRelationLabel,
   PACK_INTENSITY,
   packQuestionIds,
   QUESTION_PACKS,
@@ -119,7 +119,7 @@ function PackCard({ pack, allQuestions, selected, onApply, onRemove }) {
   );
   const count = questions.length;
   const intensity = PACK_INTENSITY[pack.intensity];
-  const audience = PACK_AUDIENCE[pack.audience];
+  const audience = getPackRelationLabel(pack);
 
   return (
     <div
@@ -145,7 +145,7 @@ function PackCard({ pack, allQuestions, selected, onApply, onRemove }) {
           )}
           <p className="mt-2 text-xs font-medium text-slate-500">
             {formatPackSubtitle(pack, count)}
-            {audience ? ` · ${audience.label}` : ''}
+            {audience ? ` · ${audience}` : ''}
           </p>
           <div className="mt-2 flex flex-wrap gap-1.5">
             {pack.categoryIds.map((categoryId) => (
@@ -210,7 +210,7 @@ function PacksView({ allQuestions, selection, onOpenCustomPack }) {
   return (
     <div className="space-y-3">
       <p className="text-sm text-slate-600">
-        Escolha um pacote pelo momento de vocês. Cada um tem temas, intensidade e tempo estimado.
+        Escolha um pacote pelo tipo de dupla ou momento. Amigos, colegas, família, romance — tem para cada relação.
         Suas perguntas ficam em &quot;Minhas perguntas&quot; no final.
       </p>
       <div className="grid gap-3 sm:grid-cols-2">
