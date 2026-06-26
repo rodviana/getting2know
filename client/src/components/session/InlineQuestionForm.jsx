@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { CATEGORIES } from '../../constants/categories';
 import {
   QUESTION_TYPE_OPTIONS,
@@ -20,10 +20,16 @@ export default function InlineQuestionForm({
   onCancel,
   submitLabel = 'Salvar pergunta',
   compact = false,
+  initialValues = null,
 }) {
-  const [form, setForm] = useState(EMPTY_QUESTION_FORM);
+  const [form, setForm] = useState(() => initialValues ?? EMPTY_QUESTION_FORM);
   const [error, setError] = useState('');
   const [submitting, setSubmitting] = useState(false);
+
+  useEffect(() => {
+    setForm(initialValues ?? EMPTY_QUESTION_FORM);
+    setError('');
+  }, [initialValues]);
 
   function handleTypeChange(type) {
     setForm((current) => ({
@@ -64,7 +70,9 @@ export default function InlineQuestionForm({
     setSubmitting(true);
     try {
       await onSubmit(payload);
-      setForm(EMPTY_QUESTION_FORM);
+      if (!initialValues) {
+        setForm(EMPTY_QUESTION_FORM);
+      }
       setError('');
     } catch {
       // apiClient already showed the error toast

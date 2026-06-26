@@ -169,13 +169,9 @@ export default function Home() {
           </button>
         </section>
 
-        <nav className="flex flex-wrap items-center gap-x-1 gap-y-2 border-t border-slate-200/80 pt-6 text-sm">
-          <Link to="/questions" className="font-medium text-slate-600 hover:text-rose-600">
-            Minhas perguntas
-          </Link>
-          <span className="text-slate-300" aria-hidden="true">·</span>
+        <nav className="border-t border-slate-200/80 pt-6 text-sm">
           <Link to="/my-sessions" className="font-medium text-slate-600 hover:text-rose-600">
-            Histórico
+            Histórico de sessões
           </Link>
         </nav>
       </div>

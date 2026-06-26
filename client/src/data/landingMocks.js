@@ -68,7 +68,7 @@ export const LANDING_HIGHLIGHTS = [
   },
   {
     title: 'Suas perguntas',
-    description: 'Monte um banco pessoal e reutilize nas próximas sessões.',
+    description: 'Crie perguntas personalizadas ao montar o questionário.',
     emoji: '✏️',
   },
   {

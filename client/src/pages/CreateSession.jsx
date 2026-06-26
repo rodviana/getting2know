@@ -1,5 +1,6 @@
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { useEffect, useMemo, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { useSession } from '../hooks/useSession';
 import { useQuestionBank } from '../hooks/useQuestionBank';
 import { useQuestionSelection } from '../hooks/useQuestionSelection';
@@ -66,11 +67,52 @@ function StepIndicator({ currentStep }) {
   );
 }
 
+function StepFooter({ hint, step, canGoNext, submitting, onBack, onNext, onSubmit }) {
+  return createPortal(
+    <div className="fixed inset-x-0 bottom-0 z-30 border-t border-slate-200/80 bg-white/95 px-4 py-4 backdrop-blur-md lg:px-6">
+      <div className="mx-auto flex max-w-5xl flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <p className="text-center text-sm text-slate-600 sm:text-left">{hint}</p>
+        <div className="flex gap-3">
+          {step !== 'partner' ? (
+            <button type="button" onClick={onBack} className="btn-secondary flex-1 sm:flex-none">
+              Voltar
+            </button>
+          ) : (
+            <Link to="/home" className="btn-secondary flex-1 sm:flex-none">
+              Cancelar
+            </Link>
+          )}
+          {step === 'review' ? (
+            <button
+              type="button"
+              disabled={submitting}
+              onClick={onSubmit}
+              className="btn-primary flex-1 sm:min-w-[180px]"
+            >
+              {submitting ? 'Criando...' : 'Criar sessão'}
+            </button>
+          ) : (
+            <button
+              type="button"
+              disabled={!canGoNext}
+              onClick={onNext}
+              className="btn-primary flex-1 sm:min-w-[180px]"
+            >
+              Continuar
+            </button>
+          )}
+        </div>
+      </div>
+    </div>,
+    document.body,
+  );
+}
+
 export default function CreateSession() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const { createSession, listUserSessions } = useSession();
-  const { allQuestions, loading, addQuestion } = useQuestionBank();
+  const { allQuestions, loading, addQuestion, updateQuestion, deleteQuestion } = useQuestionBank();
   const selection = useQuestionSelection();
   const {
     selectedIds,
@@ -176,6 +218,21 @@ export default function CreateSession() {
     else if (step === 'questions') setStep('format');
     else if (step === 'format') setStep('partner');
   }
+
+  const stepHint = (() => {
+    if (step === 'partner') return 'Passo 1 de 4 — quem vai participar';
+    if (step === 'format') return 'Passo 2 de 4 — formato da sessão';
+    if (step === 'questions') {
+      if (selectedIds.length === 0) return 'Escolha pelo menos uma pergunta para continuar';
+      return (
+        <>
+          <span className="font-semibold text-slate-900">{selectedIds.length}</span>
+          {' '}pergunta{selectedIds.length === 1 ? '' : 's'} selecionada{selectedIds.length === 1 ? '' : 's'}
+        </>
+      );
+    }
+    return 'Pronto para criar e compartilhar o código';
+  })();
 
   const canGoNext = (() => {
     if (step === 'partner') {
@@ -341,7 +398,7 @@ export default function CreateSession() {
             <div>
               <h2 className="font-semibold text-slate-900">Monte o questionário</h2>
               <p className="mt-1 text-sm text-slate-500">
-                Use um pacote pronto, explore por tema ou abra &quot;Minhas perguntas&quot; para criar novas aqui.
+                Use um pacote pelo momento de vocês, explore por tema ou abra &quot;Minhas perguntas&quot; para criar novas aqui.
               </p>
             </div>
           </div>
@@ -352,6 +409,8 @@ export default function CreateSession() {
               questions={allQuestions}
               selection={selection}
               onAddQuestion={addQuestion}
+              onUpdateQuestion={updateQuestion}
+              onDeleteQuestion={deleteQuestion}
               previouslyAskedIds={previouslyAskedIds}
               partnerName={repeatMode === 'repeat' ? partnerDisplayName : null}
             />
@@ -443,55 +502,15 @@ export default function CreateSession() {
         </section>
       )}
 
-      <div className="fixed inset-x-0 bottom-0 z-10 border-t border-slate-200/80 bg-white/95 px-4 py-4 backdrop-blur-md lg:px-6">
-        <div className="mx-auto flex max-w-5xl flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-          <p className="text-center text-sm text-slate-600 sm:text-left">
-            {step === 'partner' && 'Passo 1 de 4 — quem vai participar'}
-            {step === 'format' && 'Passo 2 de 4 — formato da sessão'}
-            {step === 'questions' && (
-              selectedIds.length === 0
-                ? 'Escolha pelo menos uma pergunta para continuar'
-                : (
-                  <>
-                    <span className="font-semibold text-slate-900">{selectedIds.length}</span>
-                    {' '}pergunta{selectedIds.length === 1 ? '' : 's'} selecionada{selectedIds.length === 1 ? '' : 's'}
-                  </>
-                )
-            )}
-            {step === 'review' && 'Pronto para criar e compartilhar o código'}
-          </p>
-          <div className="flex gap-3">
-            {step !== 'partner' ? (
-              <button type="button" onClick={goBack} className="btn-secondary flex-1 sm:flex-none">
-                Voltar
-              </button>
-            ) : (
-              <Link to="/home" className="btn-secondary flex-1 sm:flex-none">
-                Cancelar
-              </Link>
-            )}
-            {step === 'review' ? (
-              <button
-                type="button"
-                disabled={submitting}
-                onClick={handleSubmit}
-                className="btn-primary flex-1 sm:min-w-[180px]"
-              >
-                {submitting ? 'Criando...' : 'Criar sessão'}
-              </button>
-            ) : (
-              <button
-                type="button"
-                disabled={!canGoNext}
-                onClick={goNext}
-                className="btn-primary flex-1 sm:min-w-[180px]"
-              >
-                Continuar
-              </button>
-            )}
-          </div>
-        </div>
-      </div>
+      <StepFooter
+        hint={stepHint}
+        step={step}
+        canGoNext={canGoNext}
+        submitting={submitting}
+        onBack={goBack}
+        onNext={goNext}
+        onSubmit={handleSubmit}
+      />
     </div>
   );
 }

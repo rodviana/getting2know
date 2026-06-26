@@ -1,13 +1,16 @@
 import { useMemo, useState } from 'react';
-import { Link } from 'react-router-dom';
 import { CATEGORIES, categoryById } from '../../constants/categories';
 import {
   CUSTOM_QUESTION_PACK,
   customPackQuestionIds,
+  formatPackSubtitle,
   isCustomPackFullySelected,
   isPackFullySelected,
+  PACK_AUDIENCE,
+  PACK_INTENSITY,
   packQuestionIds,
   QUESTION_PACKS,
+  resolvePackQuestions,
 } from '../../constants/questionPacks';
 import { filterHiddenRemoved } from '../../hooks/useQuestionSelection';
 import CategoryBadge from './CategoryBadge';
@@ -108,8 +111,90 @@ function QuestionRow({
   );
 }
 
+function PackCard({ pack, allQuestions, selected, onApply, onRemove }) {
+  const [previewOpen, setPreviewOpen] = useState(false);
+  const questions = useMemo(
+    () => resolvePackQuestions(pack, allQuestions),
+    [pack, allQuestions],
+  );
+  const count = questions.length;
+  const intensity = PACK_INTENSITY[pack.intensity];
+  const audience = PACK_AUDIENCE[pack.audience];
+
+  return (
+    <div
+      className={[
+        'rounded-xl border p-4 transition',
+        selected ? 'border-rose-300 bg-rose-50/40' : 'border-slate-200 bg-white',
+      ].join(' ')}
+    >
+      <div className="flex items-start gap-3">
+        <span className="text-2xl" aria-hidden="true">{pack.emoji}</span>
+        <div className="min-w-0 flex-1">
+          <div className="flex flex-wrap items-center gap-2">
+            <h3 className="font-semibold text-slate-900">{pack.title}</h3>
+            {intensity && (
+              <span className={`rounded-full px-2 py-0.5 text-xs font-medium ring-1 ring-inset ${intensity.className}`}>
+                {intensity.label}
+              </span>
+            )}
+          </div>
+          <p className="mt-1 text-sm text-slate-600">{pack.description}</p>
+          {pack.intent && (
+            <p className="mt-1.5 text-xs text-slate-500">{pack.intent}</p>
+          )}
+          <p className="mt-2 text-xs font-medium text-slate-500">
+            {formatPackSubtitle(pack, count)}
+            {audience ? ` · ${audience.label}` : ''}
+          </p>
+          <div className="mt-2 flex flex-wrap gap-1.5">
+            {pack.categoryIds.map((categoryId) => (
+              <CategoryBadge key={categoryId} categoryId={categoryId} />
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {count > 0 && (
+        <div className="mt-3">
+          <button
+            type="button"
+            onClick={() => setPreviewOpen((open) => !open)}
+            className="text-xs font-medium text-rose-600 hover:text-rose-700"
+          >
+            {previewOpen ? 'Ocultar perguntas' : `Ver as ${count} perguntas`}
+          </button>
+          {previewOpen && (
+            <ol className="mt-2 max-h-48 space-y-1.5 overflow-y-auto rounded-lg border border-slate-100 bg-slate-50/80 p-3">
+              {questions.map((question, index) => (
+                <li key={question.id} className="text-xs leading-relaxed text-slate-700">
+                  <span className="font-semibold text-rose-500">{index + 1}.</span>{' '}
+                  {question.text}
+                </li>
+              ))}
+            </ol>
+          )}
+        </div>
+      )}
+
+      <button
+        type="button"
+        onClick={() => (selected ? onRemove() : onApply())}
+        disabled={count === 0}
+        className={selected ? 'btn-secondary mt-4 w-full' : 'btn-primary mt-4 w-full'}
+      >
+        {count === 0
+          ? 'Sem perguntas disponíveis'
+          : selected
+            ? 'Remover pacote'
+            : 'Adicionar pacote'}
+      </button>
+    </div>
+  );
+}
+
 function PacksView({ allQuestions, selection, onOpenCustomPack }) {
-  const { selectedIds, removedIds, mergeSelected, removeFromSelected } = selection;
+  const { selectedIds, mergeSelected, removeFromSelected } = selection;
 
   function applyPack(pack) {
     mergeSelected(packQuestionIds(pack, allQuestions));
@@ -125,36 +210,21 @@ function PacksView({ allQuestions, selection, onOpenCustomPack }) {
   return (
     <div className="space-y-3">
       <p className="text-sm text-slate-600">
-        Pacotes prontos para começar rápido. Suas perguntas ficam no pacote separado no final.
+        Escolha um pacote pelo momento de vocês. Cada um tem temas, intensidade e tempo estimado.
+        Suas perguntas ficam em &quot;Minhas perguntas&quot; no final.
       </p>
       <div className="grid gap-3 sm:grid-cols-2">
         {QUESTION_PACKS.map((pack) => {
-          const count = packQuestionIds(pack, allQuestions).length;
           const selected = isPackFullySelected(pack, allQuestions, selectedIds);
           return (
-            <div
+            <PackCard
               key={pack.id}
-              className={[
-                'rounded-xl border p-4 transition',
-                selected ? 'border-rose-300 bg-rose-50/40' : 'border-slate-200 bg-white',
-              ].join(' ')}
-            >
-              <div className="flex items-start gap-3">
-                <span className="text-2xl" aria-hidden="true">{pack.emoji}</span>
-                <div className="min-w-0 flex-1">
-                  <h3 className="font-semibold text-slate-900">{pack.title}</h3>
-                  <p className="mt-1 text-sm text-slate-500">{pack.description}</p>
-                  <p className="mt-2 text-xs text-slate-400">~{count} perguntas</p>
-                </div>
-              </div>
-              <button
-                type="button"
-                onClick={() => (selected ? removePack(pack) : applyPack(pack))}
-                className={selected ? 'btn-secondary mt-4 w-full' : 'btn-primary mt-4 w-full'}
-              >
-                {selected ? 'Remover pacote' : 'Adicionar pacote'}
-              </button>
-            </div>
+              pack={pack}
+              allQuestions={allQuestions}
+              selected={selected}
+              onApply={() => applyPack(pack)}
+              onRemove={() => removePack(pack)}
+            />
           );
         })}
 
@@ -191,9 +261,12 @@ function CustomPackView({
   selection,
   onBack,
   onAddQuestion,
+  onUpdateQuestion,
+  onDeleteQuestion,
   previouslyAskedIds,
 }) {
   const [showForm, setShowForm] = useState(false);
+  const [editingQuestion, setEditingQuestion] = useState(null);
   const {
     selectedIds,
     removedIds,
@@ -209,13 +282,54 @@ function CustomPackView({
   const visibleQuestions = filterHiddenRemoved(customQuestions, removedIds, hideRemoved);
   const allSelected = isCustomPackFullySelected(customQuestions, selectedIds);
 
+  function openCreateForm() {
+    setEditingQuestion(null);
+    setShowForm(true);
+  }
+
+  function openEditForm(question) {
+    setEditingQuestion(question);
+    setShowForm(true);
+  }
+
+  function closeForm() {
+    setShowForm(false);
+    setEditingQuestion(null);
+  }
+
   async function handleCreate(payload) {
     const created = await onAddQuestion(payload);
     if (created?.id) {
       select(created.id);
     }
-    setShowForm(false);
+    closeForm();
   }
+
+  async function handleUpdate(payload) {
+    if (!editingQuestion) return;
+    await onUpdateQuestion(editingQuestion.id, payload);
+    closeForm();
+  }
+
+  async function handleDelete(question) {
+    if (!window.confirm('Excluir esta pergunta personalizada? Ela será removida do banco.')) {
+      return;
+    }
+    await onDeleteQuestion(question.id);
+    deselect(question.id);
+    if (editingQuestion?.id === question.id) {
+      closeForm();
+    }
+  }
+
+  const editFormValues = editingQuestion
+    ? {
+        text: editingQuestion.text,
+        categoryId: editingQuestion.categoryId,
+        type: editingQuestion.type,
+        options: editingQuestion.options?.length ? editingQuestion.options : ['', ''],
+      }
+    : null;
 
   function selectAll() {
     mergeSelected(customQuestions.map((question) => question.id));
@@ -264,7 +378,7 @@ function CustomPackView({
       {!showForm ? (
         <button
           type="button"
-          onClick={() => setShowForm(true)}
+          onClick={openCreateForm}
           className="flex w-full items-center justify-center gap-2 rounded-xl border border-dashed border-violet-300 bg-violet-50/50 px-4 py-3 text-sm font-semibold text-violet-700 transition hover:border-violet-400 hover:bg-violet-50"
         >
           <span className="text-lg leading-none" aria-hidden="true">+</span>
@@ -272,12 +386,16 @@ function CustomPackView({
         </button>
       ) : (
         <div className="rounded-xl border border-violet-200 bg-white p-4">
-          <h4 className="mb-4 font-semibold text-slate-900">Nova pergunta</h4>
+          <h4 className="mb-4 font-semibold text-slate-900">
+            {editingQuestion ? 'Editar pergunta' : 'Nova pergunta'}
+          </h4>
           <InlineQuestionForm
+            key={editingQuestion?.id ?? 'new'}
             compact
-            submitLabel="Salvar e adicionar ao questionário"
-            onSubmit={handleCreate}
-            onCancel={() => setShowForm(false)}
+            initialValues={editFormValues}
+            submitLabel={editingQuestion ? 'Salvar alterações' : 'Salvar e adicionar ao questionário'}
+            onSubmit={editingQuestion ? handleUpdate : handleCreate}
+            onCancel={closeForm}
           />
         </div>
       )}
@@ -292,7 +410,7 @@ function CustomPackView({
             const selected = selectedIds.includes(question.id);
             const removed = removedIds.includes(question.id);
             return (
-              <div key={question.id}>
+              <div key={question.id} className="space-y-1">
                 <QuestionRow
                   question={question}
                   selected={selected}
@@ -304,8 +422,22 @@ function CustomPackView({
                   onRestore={() => restore(question.id)}
                 />
                 {!removed && (
-                  <div className="mt-1 pl-7">
-                    <CategoryBadge categoryId={question.categoryId} />
+                  <div className="flex flex-wrap items-center gap-2 pl-7">
+                    <button
+                      type="button"
+                      onClick={() => openEditForm(question)}
+                      className="text-xs font-medium text-violet-600 hover:text-violet-700"
+                    >
+                      Editar
+                    </button>
+                    <span className="text-slate-300" aria-hidden="true">·</span>
+                    <button
+                      type="button"
+                      onClick={() => handleDelete(question)}
+                      className="text-xs font-medium text-red-600 hover:text-red-700"
+                    >
+                      Excluir
+                    </button>
                   </div>
                 )}
               </div>
@@ -318,14 +450,6 @@ function CustomPackView({
           )}
         </div>
       )}
-
-      <p className="text-center text-xs text-slate-400">
-        Para editar ou excluir perguntas antigas,{' '}
-        <Link to="/questions" className="font-medium text-violet-600 hover:text-violet-700">
-          abra o gerenciador
-        </Link>
-        {' '}(suas seleções aqui são mantidas ao voltar).
-      </p>
     </div>
   );
 }
@@ -459,6 +583,8 @@ export default function SessionQuestionBuilder({
   questions,
   selection,
   onAddQuestion,
+  onUpdateQuestion,
+  onDeleteQuestion,
   previouslyAskedIds = new Set(),
   partnerName = null,
 }) {
@@ -598,6 +724,8 @@ export default function SessionQuestionBuilder({
           selection={selection}
           onBack={() => setCustomPackOpen(false)}
           onAddQuestion={onAddQuestion}
+          onUpdateQuestion={onUpdateQuestion}
+          onDeleteQuestion={onDeleteQuestion}
           previouslyAskedIds={previouslyAskedIds}
         />
       ) : activeCategoryId ? (

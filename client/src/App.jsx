@@ -13,8 +13,6 @@ import SessionPlay from './pages/SessionPlay';
 import SessionSummary from './pages/SessionSummary';
 import SessionHistory from './pages/SessionHistory';
 import MySessions from './pages/MySessions';
-import QuestionBankPage from './pages/QuestionBankPage';
-import QuestionFormPage from './pages/QuestionFormPage';
 
 function LandingRoute() {
   const { isAuthenticated } = useAuth();
@@ -43,9 +41,6 @@ export default function App() {
             <Route element={<ProtectedRoute />}>
               <Route element={<Layout />}>
                 <Route path="home" element={<Home />} />
-                <Route path="questions/new" element={<QuestionFormPage />} />
-                <Route path="questions/:id/edit" element={<QuestionFormPage />} />
-                <Route path="questions" element={<QuestionBankPage />} />
                 <Route path="my-sessions" element={<MySessions />} />
                 <Route path="sessions/new" element={<CreateSession />} />
                 <Route path="sessions/join" element={<JoinSession />} />
