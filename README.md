@@ -26,6 +26,7 @@ As perguntas embutidas do app continuam no front; sessões e perguntas customiza
 | Documento | Pra que serve |
 |-----------|----------------|
 | [docs/setup.md](./docs/setup.md) | Instalar Docker, subir o app, resolver pepino comum |
+| [docs/deploy.md](./docs/deploy.md) | Publicar na VPS com **getting2know.com.br** |
 | [docs/architecture.md](./docs/architecture.md) | Como o código está organizado — **leia antes de codar** |
 | [Swagger UI](http://localhost:3000/swagger-ui/index.html) | Testar a API no navegador (com o app rodando) |
 
