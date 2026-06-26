@@ -5,7 +5,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 @Schema(description = "Login credentials")
 public class LoginRequest {
 
-    @Schema(example = "rodrigo")
+    @Schema(example = "maria")
     private String username;
 
     @Schema(example = "admin123")

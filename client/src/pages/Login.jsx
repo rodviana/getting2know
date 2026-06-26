@@ -107,7 +107,7 @@ export default function Login() {
               type="text"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
-              placeholder="Ex.: rodrigo"
+              placeholder="Seu usuário"
               autoComplete="username"
             />
           </div>

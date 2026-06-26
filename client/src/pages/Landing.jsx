@@ -4,7 +4,6 @@ import QuestionTypeBadge from '../components/session/QuestionTypeBadge';
 import SessionProgress from '../components/session/SessionProgress';
 import {
   LANDING_DEMO,
-  LANDING_HIGHLIGHTS,
   LANDING_SAMPLE_QUESTIONS,
   LANDING_STEPS,
 } from '../data/landingMocks';
@@ -100,9 +99,11 @@ function MockLobbyPreview() {
   return (
     <div className="card overflow-hidden">
       <div className="border-b border-slate-100 bg-slate-50/80 px-5 py-4 text-center">
-        <p className="text-xs font-semibold uppercase tracking-wider text-slate-400">Código da sessão</p>
-        <p className="mt-2 font-mono text-3xl font-bold tracking-[0.3em] text-slate-900">{demo.code}</p>
-        <p className="mt-2 text-sm text-slate-500">Envie para quem vai jogar com você</p>
+        <p className="text-xs font-semibold uppercase tracking-wider text-slate-400">Link do convite</p>
+        <p className="mt-2 break-all px-2 text-sm font-medium text-slate-800">
+          getting2know.com.br/join/{demo.code}
+        </p>
+        <p className="mt-2 text-sm text-slate-500">Envie para quem vai participar com você</p>
       </div>
       <div className="grid gap-3 p-5 sm:grid-cols-2">
         <div className="flex items-center gap-3 rounded-xl border border-slate-200 bg-slate-50/80 p-4">
@@ -179,7 +180,7 @@ export default function Landing() {
                 </span>
               </h1>
               <p className="mt-5 max-w-xl text-lg leading-relaxed text-slate-600">
-                Monte um questionário, convide alguém com um código simples e descubram respostas
+                Monte um questionário, convide alguém com um link e descubram respostas
                 juntos — no seu ritmo ou ao vivo, como preferirem.
               </p>
               <div className="mt-8 flex flex-col gap-3 sm:flex-row">
@@ -227,7 +228,7 @@ export default function Landing() {
                 Sala de espera, sem complicação
               </h2>
               <p className="mt-3 text-slate-600">
-                Um código de quatro caracteres. A outra pessoa entra quando quiser — a tela
+                Um link de convite. A outra pessoa entra quando quiser — a tela
                 atualiza sozinha quando todo mundo está pronto.
               </p>
               <ul className="mt-6 space-y-3 text-sm text-slate-600">
@@ -266,21 +267,6 @@ export default function Landing() {
                 <SampleQuestionCard key={question.text} question={question} index={index} />
               ))}
             </ul>
-          </div>
-        </section>
-
-        <section className="mx-auto max-w-6xl px-4 py-16 lg:px-8 lg:py-20">
-          <h2 className="text-center text-3xl font-bold tracking-tight text-slate-900">
-            Feito para conversas que importam
-          </h2>
-          <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            {LANDING_HIGHLIGHTS.map((item) => (
-              <div key={item.title} className="card p-5 text-center">
-                <span className="text-3xl" aria-hidden="true">{item.emoji}</span>
-                <h3 className="mt-3 font-semibold text-slate-900">{item.title}</h3>
-                <p className="mt-2 text-sm leading-relaxed text-slate-600">{item.description}</p>
-              </div>
-            ))}
           </div>
         </section>
 

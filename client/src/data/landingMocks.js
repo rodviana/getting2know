@@ -7,7 +7,7 @@ export const LANDING_DEMO = {
   question: {
     categoryId: 'about_us',
     type: 'TEXT',
-    text: 'O que você acha que temos em comum?',
+    text: 'Qual memória nossa você mais gosta de lembrar?',
   },
   hostAnswer: 'O dia em que a gente se perdeu na cidade e encontramos aquele café escondido.',
   partnerAnswer: 'Nosso primeiro road trip — sem mapa, só música alta e conversa.',
@@ -21,8 +21,8 @@ export const LANDING_STEPS = [
   },
   {
     step: '02',
-    title: 'Compartilhe o código',
-    description: 'Um código de 4 letras. A outra pessoa entra quando quiser.',
+    title: 'Compartilhe o link',
+    description: 'Um link de convite. A outra pessoa entra quando quiser — se não tiver conta, cria na hora.',
   },
   {
     step: '03',
@@ -52,28 +52,5 @@ export const LANDING_SAMPLE_QUESTIONS = [
     categoryId: 'about_us',
     type: 'TEXT',
     text: 'Qual foi a sua primeira impressão sobre mim?',
-  },
-];
-
-export const LANDING_HIGHLIGHTS = [
-  {
-    title: 'Sem pressa',
-    description: 'No seu tempo: respondam quando der, cada um no próprio ritmo.',
-    emoji: '🌙',
-  },
-  {
-    title: 'Ao vivo',
-    description: 'Ao vivo: os dois online, pergunta a pergunta, com reveal na hora.',
-    emoji: '⚡',
-  },
-  {
-    title: 'Suas perguntas',
-    description: 'Crie perguntas personalizadas ao montar o questionário.',
-    emoji: '✏️',
-  },
-  {
-    title: 'Histórico',
-    description: 'Revise o que vocês já responderam — ótimo para retomar conversas.',
-    emoji: '📖',
   },
 ];
