@@ -8,12 +8,12 @@ Projeto pessoal do **Rodrigo**. A ideia é criar um espaço onde duas pessoas re
 
 Hoje o app tem login, perguntas customizadas e sessões **persistidas no PostgreSQL**:
 
-1. **Início** — montar questionário, entrar com código ou gerenciar perguntas  
-2. **Minhas perguntas** — cadastrar perguntas de texto, seleção única ou múltipla (salvas no banco)  
-3. **Montar questionário** — escolher exatamente quais perguntas entram na sessão  
-4. **Sala de espera** — compartilhar código; polling até o parceiro entrar  
-5. **Perguntas** — cada pessoa responde de verdade; revelação quando os dois enviam  
-6. **Resumo e histórico** — revisar o que foi respondido  
+1. **Início** — montar questionário, entrar com código ou gerenciar perguntas
+2. **Minhas perguntas** — cadastrar perguntas de texto, seleção única ou múltipla (salvas no banco)
+3. **Montar questionário** — escolher exatamente quais perguntas entram na sessão
+4. **Sala de espera** — compartilhar código; polling até o parceiro entrar
+5. **Perguntas** — cada pessoa responde de verdade; revelação quando os dois enviam
+6. **Resumo e histórico** — revisar o que foi respondido
 
 As perguntas embutidas do app continuam no front; sessões e perguntas customizadas usam a API.
 
@@ -23,12 +23,14 @@ As perguntas embutidas do app continuam no front; sessões e perguntas customiza
 
 ## Documentação
 
-| Documento | Pra que serve |
-|-----------|----------------|
-| [docs/setup.md](./docs/setup.md) | Instalar Docker, subir o app, resolver pepino comum |
-| [docs/deploy.md](./docs/deploy.md) | Publicar na VPS com **getting2know.com.br** |
-| [docs/architecture.md](./docs/architecture.md) | Como o código está organizado — **leia antes de codar** |
-| [Swagger UI](http://localhost:3000/swagger-ui/index.html) | Testar a API no navegador (com o app rodando) |
+
+| Documento                                                 | Pra que serve                                           |
+| --------------------------------------------------------- | ------------------------------------------------------- |
+| [docs/setup.md](./docs/setup.md)                          | Instalar Docker, subir o app, resolver pepino comum     |
+| [docs/deploy.md](./docs/deploy.md)                        | Publicar na VPS com **getting2know.com.br**             |
+| [docs/architecture.md](./docs/architecture.md)            | Como o código está organizado — **leia antes de codar** |
+| [Swagger UI](http://localhost:3000/swagger-ui/index.html) | Testar a API no navegador (com o app rodando)           |
+
 
 ---
 
@@ -54,12 +56,14 @@ controller/  →  service/  →  repository/
 
 ## Stack
 
-| Parte | Tecnologia |
-|-------|------------|
-| API | Java 11, Spring Boot 2.7, Maven |
+
+| Parte | Tecnologia                            |
+| ----- | ------------------------------------- |
+| API   | Java 11, Spring Boot 2.7, Maven       |
 | Banco | PostgreSQL 15 (via JDBC + procedures) |
-| Login | JWT + BCrypt |
-| Front | React 18 + Vite + Tailwind |
+| Login | JWT + BCrypt                          |
+| Front | React 18 + Vite + Tailwind            |
+
 
 ---
 
@@ -75,10 +79,12 @@ Resumo rápido:
 docker compose up --build --force-recreate --remove-orphans
 ```
 
-| O quê | Onde abrir |
-|-------|------------|
-| Telas do sistema | http://localhost:3000 |
-| Swagger (testar API) | http://localhost:3000/swagger-ui/index.html |
+
+| O quê                | Onde abrir                                                                                 |
+| -------------------- | ------------------------------------------------------------------------------------------ |
+| Telas do sistema     | [http://localhost:3000](http://localhost:3000)                                             |
+| Swagger (testar API) | [http://localhost:3000/swagger-ui/index.html](http://localhost:3000/swagger-ui/index.html) |
+
 
 **Login de teste:** `demo@getting2know.com` / `admin123`
 

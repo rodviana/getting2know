@@ -1,3 +1,5 @@
+DROP FUNCTION IF EXISTS p_find_user_by_email(VARCHAR);
+
 CREATE OR REPLACE FUNCTION p_find_user_by_email(p_email VARCHAR)
 RETURNS TABLE (
     id       BIGINT,

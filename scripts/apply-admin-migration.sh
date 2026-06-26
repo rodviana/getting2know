@@ -14,7 +14,14 @@ run_sql() {
   docker exec -i "$CONTAINER" psql -v ON_ERROR_STOP=1 -U postgres -d getting2know < "$file"
 }
 
+if ! docker ps --format '{{.Names}}' | grep -qx "$CONTAINER"; then
+  echo "Container $CONTAINER não está rodando. Suba o stack antes:"
+  echo "  docker compose -f docker-compose.prod.yml --env-file .env.prod up -d"
+  exit 1
+fi
+
 run_sql "$DB_DIR/V008_schema_admin_activity.sql"
+run_sql "$DB_DIR/V008_admin_upgrade_drops.sql"
 run_sql "$DB_DIR/P_FIND_USER_BY_EMAIL.sql"
 run_sql "$DB_DIR/P_FIND_USER_BY_ID.sql"
 run_sql "$DB_DIR/V009_seed_admin.sql"

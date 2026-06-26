@@ -177,9 +177,10 @@ git pull
 docker compose -f docker-compose.prod.yml --env-file .env.prod up --build -d
 ```
 
-Se a release incluir **painel admin** e o banco já existia antes, aplique a migration **sem** `-v`:
+Se a release incluir **painel admin** e o banco já existia antes, aplique a migration **sem** `-v` (pode reexecutar se falhar no meio):
 
 ```bash
+git pull
 bash scripts/apply-admin-migration.sh
 docker compose -f docker-compose.prod.yml --env-file .env.prod up --build -d
 ```

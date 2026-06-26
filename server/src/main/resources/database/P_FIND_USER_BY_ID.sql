@@ -1,3 +1,5 @@
+DROP FUNCTION IF EXISTS p_find_user_by_id(BIGINT);
+
 CREATE OR REPLACE FUNCTION p_find_user_by_id(p_user_id BIGINT)
 RETURNS TABLE (
     id       BIGINT,
