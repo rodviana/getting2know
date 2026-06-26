@@ -34,24 +34,25 @@ public abstract class BaseController {
     }
 
     protected ResponseEntity<HttpResponseEntityDTO<?>> badRequest(GlobalException exception) {
-        log.warn("[getting2know] business error message={}", exception.getMessage());
+        log.warn("[getting2know] business error code={} message={}", exception.getErrorCode(), exception.getMessage());
         String message = exception.getMessage() != null
                 ? exception.getMessage()
                 : ValidationMessageEnum.INVALID_REQUEST.getDescriptionPt();
-        return errorResponse(message, HttpStatus.BAD_REQUEST, exception.getErrors());
+        return errorResponse(message, HttpStatus.BAD_REQUEST, exception.getErrors(), exception.getErrorCode());
     }
 
     protected ResponseEntity<HttpResponseEntityDTO<?>> internalServerError(Exception e, ValidationMessageEnum message) {
         log.error("[internalServerError] {}: {}", e.getClass().getSimpleName(), e.getMessage(), e);
-        return errorResponse(message.getDescriptionPt(), HttpStatus.INTERNAL_SERVER_ERROR, null);
+        return errorResponse(message.getDescriptionPt(), HttpStatus.INTERNAL_SERVER_ERROR, null, message.getCode());
     }
 
     private ResponseEntity<HttpResponseEntityDTO<?>> errorResponse(String message, HttpStatus status,
-                                                                    List<String> errors) {
+                                                                    List<String> errors, String errorCode) {
         HttpResponseEntityDTO<?> dto = new HttpResponseEntityDTO<>();
         dto.setSuccess(false);
         dto.setStatus(status.value());
         dto.setMessage(message);
+        dto.setErrorCode(errorCode);
         if (errors != null && !errors.isEmpty()) {
             dto.setErrors(errors);
         }

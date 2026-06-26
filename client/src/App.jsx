@@ -4,12 +4,30 @@ import { ToastProvider } from './components/ToastProvider';
 import Layout from './components/Layout';
 import ProtectedRoute from './components/ProtectedRoute';
 import Login from './pages/Login';
+import Landing from './pages/Landing';
 import Home from './pages/Home';
+import CreateSession from './pages/CreateSession';
+import JoinSession from './pages/JoinSession';
+import SessionLobby from './pages/SessionLobby';
+import SessionPlay from './pages/SessionPlay';
+import SessionSummary from './pages/SessionSummary';
+import SessionHistory from './pages/SessionHistory';
+import MySessions from './pages/MySessions';
+import QuestionBankPage from './pages/QuestionBankPage';
+import QuestionFormPage from './pages/QuestionFormPage';
+
+function LandingRoute() {
+  const { isAuthenticated } = useAuth();
+  if (isAuthenticated) {
+    return <Navigate to="/home" replace />;
+  }
+  return <Landing />;
+}
 
 function LoginRoute() {
   const { isAuthenticated } = useAuth();
   if (isAuthenticated) {
-    return <Navigate to="/" replace />;
+    return <Navigate to="/home" replace />;
   }
   return <Login />;
 }
@@ -20,10 +38,21 @@ export default function App() {
       <AuthProvider>
         <BrowserRouter>
           <Routes>
+            <Route path="/" element={<LandingRoute />} />
             <Route path="/login" element={<LoginRoute />} />
             <Route element={<ProtectedRoute />}>
               <Route element={<Layout />}>
-                <Route index element={<Home />} />
+                <Route path="home" element={<Home />} />
+                <Route path="questions/new" element={<QuestionFormPage />} />
+                <Route path="questions/:id/edit" element={<QuestionFormPage />} />
+                <Route path="questions" element={<QuestionBankPage />} />
+                <Route path="my-sessions" element={<MySessions />} />
+                <Route path="sessions/new" element={<CreateSession />} />
+                <Route path="sessions/join" element={<JoinSession />} />
+                <Route path="sessions/:code/play" element={<SessionPlay />} />
+                <Route path="sessions/:code/summary" element={<SessionSummary />} />
+                <Route path="sessions/:code/history" element={<SessionHistory />} />
+                <Route path="sessions/:code" element={<SessionLobby />} />
               </Route>
             </Route>
             <Route path="*" element={<Navigate to="/" replace />} />

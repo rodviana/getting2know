@@ -1,0 +1,72 @@
+import { QuestionType } from './questionTypes';
+
+export const BUILT_IN_QUESTIONS = [
+  {
+    id: 'builtin-1',
+    categoryId: 'light',
+    type: QuestionType.TEXT,
+    text: 'Qual foi a última coisa que te fez rir muito?',
+    custom: false,
+  },
+  {
+    id: 'builtin-2',
+    categoryId: 'light',
+    type: QuestionType.SINGLE_CHOICE,
+    text: 'Como você prefere passar um domingo?',
+    options: ['Em casa descansando', 'Na rua explorando', 'Com amigos', 'Aprendendo algo novo'],
+    custom: false,
+  },
+  {
+    id: 'builtin-3',
+    categoryId: 'light',
+    type: QuestionType.MULTIPLE_CHOICE,
+    text: 'Quais dessas coisas te deixam feliz?',
+    options: ['Música', 'Comida boa', 'Natureza', 'Conversas longas', 'Filmes'],
+    custom: false,
+  },
+  {
+    id: 'builtin-4',
+    categoryId: 'deep',
+    type: QuestionType.TEXT,
+    text: 'O que você valoriza numa amizade de verdade?',
+    custom: false,
+  },
+  {
+    id: 'builtin-5',
+    categoryId: 'deep',
+    type: QuestionType.SINGLE_CHOICE,
+    text: 'O que é mais importante num relacionamento?',
+    options: ['Confiança', 'Humor', 'Ambição', 'Carinho', 'Liberdade'],
+    custom: false,
+  },
+  {
+    id: 'builtin-6',
+    categoryId: 'deep',
+    type: QuestionType.TEXT,
+    text: 'O que você gostaria que as pessoas entendessem melhor sobre você?',
+    custom: false,
+  },
+  {
+    id: 'builtin-7',
+    categoryId: 'fun',
+    type: QuestionType.SINGLE_CHOICE,
+    text: 'Se pudesse jantar com uma pessoa famosa, quem seria?',
+    options: ['Um artista', 'Um cientista', 'Um atleta', 'Um chef', 'Alguém da história'],
+    custom: false,
+  },
+  {
+    id: 'builtin-8',
+    categoryId: 'fun',
+    type: QuestionType.MULTIPLE_CHOICE,
+    text: 'Quais superpoderes inúteis você escolheria?',
+    options: ['Sempre saber a hora certa', 'Falar com plantas', 'Nunca molhar os pés', 'Cheiro de pão fresco'],
+    custom: false,
+  },
+  {
+    id: 'builtin-9',
+    categoryId: 'fun',
+    type: QuestionType.TEXT,
+    text: 'Qual lugar do mundo você visitaria primeiro juntos?',
+    custom: false,
+  },
+];

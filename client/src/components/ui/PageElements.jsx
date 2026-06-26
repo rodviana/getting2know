@@ -6,7 +6,7 @@ export function PageHeader({ eyebrow, title, description, actions, backTo, backL
       {backTo && (
         <Link
           to={backTo}
-          className="mb-4 inline-flex items-center gap-1.5 text-sm font-medium text-slate-500 transition hover:text-blue-600"
+          className="mb-4 inline-flex items-center gap-1.5 text-sm font-medium text-slate-500 transition hover:text-rose-600"
         >
           <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
             <path d="M15 18l-6-6 6-6" strokeLinecap="round" strokeLinejoin="round" />
@@ -17,7 +17,7 @@ export function PageHeader({ eyebrow, title, description, actions, backTo, backL
       <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
         <div>
           {eyebrow && (
-            <p className="text-xs font-semibold uppercase tracking-wider text-blue-600">{eyebrow}</p>
+            <p className="text-xs font-semibold uppercase tracking-wider text-rose-500">{eyebrow}</p>
           )}
           <h1 className="mt-1 text-2xl font-bold tracking-tight text-slate-900">{title}</h1>
           {description && (
@@ -41,7 +41,7 @@ export function Card({ children, className = '', padding = true }) {
 export function LoadingCard({ message = 'Carregando...' }) {
   return (
     <Card className="flex items-center gap-3 text-slate-500">
-      <span className="inline-block h-5 w-5 animate-spin rounded-full border-2 border-slate-200 border-t-blue-600" />
+      <span className="inline-block h-5 w-5 animate-spin rounded-full border-2 border-slate-200 border-t-rose-500" />
       {message}
     </Card>
   );

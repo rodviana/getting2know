@@ -38,7 +38,7 @@ public class LoginService {
         log.info("[login] attempt email={}", email);
 
         UserRecord user = authJdbcRepository.findByEmail(new UserEmailFilter(email))
-                .orElseThrow(() -> GlobalException.of(ValidationMessageEnum.INVALID_CREDENTIALS));
+                .orElseThrow(() -> GlobalException.of(ValidationMessageEnum.USER_NOT_FOUND));
 
         if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
             log.warn("[login] invalid password email={}", user.getEmail());

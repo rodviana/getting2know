@@ -6,7 +6,16 @@ Perguntas para duas pessoas se conhecerem.
 
 Projeto pessoal do **Rodrigo**. A ideia é criar um espaço onde duas pessoas respondem perguntas e descobrem coisas novas uma sobre a outra.
 
-Hoje o app tem login e uma tela inicial com o fluxo planejado. Sessões e perguntas ainda vêm depois.
+Hoje o app tem login, perguntas customizadas e sessões **persistidas no PostgreSQL**:
+
+1. **Início** — montar questionário, entrar com código ou gerenciar perguntas  
+2. **Minhas perguntas** — cadastrar perguntas de texto, seleção única ou múltipla (salvas no banco)  
+3. **Montar questionário** — escolher exatamente quais perguntas entram na sessão  
+4. **Sala de espera** — compartilhar código; polling até o parceiro entrar  
+5. **Perguntas** — cada pessoa responde de verdade; revelação quando os dois enviam  
+6. **Resumo e histórico** — revisar o que foi respondido  
+
+As perguntas embutidas do app continuam no front; sessões e perguntas customizadas usam a API.
 
 **Combinado do projeto:** código em inglês (classes, tabelas, campos do JSON); telas e mensagens de erro em português.
 

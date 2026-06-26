@@ -1,3 +1,25 @@
 -- Manual schema reset (run via psql when you need a clean database)
+DROP FUNCTION IF EXISTS p_create_user(VARCHAR, VARCHAR, VARCHAR);
+DROP FUNCTION IF EXISTS p_find_user_by_id(BIGINT);
+DROP FUNCTION IF EXISTS p_list_user_pair_sessions(BIGINT);
+DROP FUNCTION IF EXISTS p_count_answers_for_question(BIGINT);
+DROP FUNCTION IF EXISTS p_list_session_answers(BIGINT);
+DROP FUNCTION IF EXISTS p_upsert_session_answer(BIGINT, BIGINT, BIGINT, JSONB);
+DROP FUNCTION IF EXISTS p_list_session_questions(BIGINT);
+DROP FUNCTION IF EXISTS p_insert_session_question(BIGINT, INT, VARCHAR, VARCHAR, VARCHAR, TEXT, JSONB);
+DROP FUNCTION IF EXISTS p_update_pair_session_status(BIGINT, VARCHAR, INT, TIMESTAMP);
+DROP FUNCTION IF EXISTS p_start_pair_session(BIGINT);
+DROP FUNCTION IF EXISTS p_join_pair_session(VARCHAR, BIGINT);
+DROP FUNCTION IF EXISTS p_find_pair_session_by_code(VARCHAR);
+DROP FUNCTION IF EXISTS p_create_pair_session(BIGINT, VARCHAR);
+DROP FUNCTION IF EXISTS p_delete_question(BIGINT, BIGINT);
+DROP FUNCTION IF EXISTS p_update_question(BIGINT, BIGINT, VARCHAR, VARCHAR, TEXT, JSONB);
+DROP FUNCTION IF EXISTS p_create_question(BIGINT, VARCHAR, VARCHAR, TEXT, JSONB);
+DROP FUNCTION IF EXISTS p_find_question_by_id(BIGINT, BIGINT);
+DROP FUNCTION IF EXISTS p_list_questions_by_user_id(BIGINT);
+DROP TABLE IF EXISTS session_answers CASCADE;
+DROP TABLE IF EXISTS session_questions CASCADE;
+DROP TABLE IF EXISTS pair_sessions CASCADE;
+DROP TABLE IF EXISTS questions CASCADE;
 DROP FUNCTION IF EXISTS p_find_user_by_email(VARCHAR);
 DROP TABLE IF EXISTS users CASCADE;

@@ -13,29 +13,30 @@ import java.util.stream.Collectors;
 public class GlobalException extends RuntimeException {
 
     private final List<String> errors;
+    private final String errorCode;
 
-    private GlobalException(String message) {
-        super(message);
-        this.errors = Collections.emptyList();
-    }
-
-    private GlobalException(String message, List<String> errors) {
+    private GlobalException(String message, List<String> errors, String errorCode) {
         super(message);
         this.errors = errors != null ? List.copyOf(errors) : Collections.emptyList();
+        this.errorCode = errorCode;
     }
 
     public List<String> getErrors() {
         return errors;
     }
 
+    public String getErrorCode() {
+        return errorCode;
+    }
+
     public static GlobalException of(ValidationMessageEnum message) {
-        return new GlobalException(message.getDescriptionPt());
+        return new GlobalException(message.getDescriptionPt(), Collections.emptyList(), message.getCode());
     }
 
     public static GlobalException of(ValidationMessageEnum message, List<ValidationMessageEnum> errorMessages) {
         List<String> errors = errorMessages.stream()
                 .map(ValidationMessageEnum::getDescriptionPt)
                 .collect(Collectors.toList());
-        return new GlobalException(message.getDescriptionPt(), errors);
+        return new GlobalException(message.getDescriptionPt(), errors, message.getCode());
     }
 }

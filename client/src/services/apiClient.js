@@ -3,11 +3,12 @@ import { notifyToast } from '../components/ToastProvider';
 const API_URL = import.meta.env.VITE_API_URL ?? '';
 
 export class ApiError extends Error {
-  constructor(message, errors = [], status = 400) {
+  constructor(message, errors = [], status = 400, code = null) {
     super(message);
     this.name = 'ApiError';
     this.errors = errors;
     this.status = status;
+    this.code = code;
   }
 }
 
@@ -65,6 +66,7 @@ export async function apiRequest(path, options = {}, config = {}) {
       body.message || 'Erro na requisição',
       body.errors || [],
       body.status || response.status,
+      body.errorCode || null,
     );
     if (showError) showApiError(apiError);
     throw apiError;

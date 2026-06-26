@@ -28,6 +28,7 @@ public class SecurityConfig {
                 .and()
                 .authorizeRequests()
                 .antMatchers(HttpMethod.POST, "/api/v1/auth/login").permitAll()
+                .antMatchers(HttpMethod.POST, "/api/v1/auth/register").permitAll()
                 .antMatchers("/api/health").permitAll()
                 .antMatchers(
                         "/swagger-ui/**",

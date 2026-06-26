@@ -13,6 +13,7 @@ public class HttpResponseEntityDTO<T> {
     private List<T> dataList;
     private List<String> errors;
     private int status;
+    private String errorCode;
 
     public boolean isSuccess() {
         return success;
@@ -60,5 +61,13 @@ public class HttpResponseEntityDTO<T> {
 
     public void setStatus(int status) {
         this.status = status;
+    }
+
+    public String getErrorCode() {
+        return errorCode;
+    }
+
+    public void setErrorCode(String errorCode) {
+        this.errorCode = errorCode;
     }
 }

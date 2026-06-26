@@ -212,8 +212,14 @@ docker exec -i getting2know-db psql -v ON_ERROR_STOP=1 -U postgres -d getting2kn
 docker exec -i getting2know-db psql -v ON_ERROR_STOP=1 -U postgres -d getting2know \
   < server/src/main/resources/database/P_FIND_USER_BY_EMAIL.sql
 docker exec -i getting2know-db psql -v ON_ERROR_STOP=1 -U postgres -d getting2know \
+  < server/src/main/resources/database/P_FIND_USER_BY_ID.sql
+docker exec -i getting2know-db psql -v ON_ERROR_STOP=1 -U postgres -d getting2know \
   < server/src/main/resources/database/V002_seed_demo.sql
+docker exec -i getting2know-db psql -v ON_ERROR_STOP=1 -U postgres -d getting2know \
+  < server/src/main/resources/database/V003_schema_questions_sessions.sql
 ```
+
+Depois aplique as procedures em `server/src/main/resources/database/P_*.sql` na ordem numérica do `docker-compose.yml` (perguntas e sessões).
 
 ### API reiniciando / erro de banco
 

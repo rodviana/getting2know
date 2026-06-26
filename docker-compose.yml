@@ -12,7 +12,27 @@ services:
       - postgres_data:/var/lib/postgresql/data
       - ./server/src/main/resources/database/V001_schema_users.sql:/docker-entrypoint-initdb.d/10-V001_schema_users.sql:ro
       - ./server/src/main/resources/database/P_FIND_USER_BY_EMAIL.sql:/docker-entrypoint-initdb.d/20-P_FIND_USER_BY_EMAIL.sql:ro
+      - ./server/src/main/resources/database/P_FIND_USER_BY_ID.sql:/docker-entrypoint-initdb.d/25-P_FIND_USER_BY_ID.sql:ro
+      - ./server/src/main/resources/database/P_CREATE_USER.sql:/docker-entrypoint-initdb.d/26-P_CREATE_USER.sql:ro
       - ./server/src/main/resources/database/V002_seed_demo.sql:/docker-entrypoint-initdb.d/30-V002_seed_demo.sql:ro
+      - ./server/src/main/resources/database/V003_schema_questions_sessions.sql:/docker-entrypoint-initdb.d/40-V003_schema_questions_sessions.sql:ro
+      - ./server/src/main/resources/database/V004_session_format.sql:/docker-entrypoint-initdb.d/41-V004_session_format.sql:ro
+      - ./server/src/main/resources/database/P_LIST_QUESTIONS_BY_USER_ID.sql:/docker-entrypoint-initdb.d/50-P_LIST_QUESTIONS_BY_USER_ID.sql:ro
+      - ./server/src/main/resources/database/P_FIND_QUESTION_BY_ID.sql:/docker-entrypoint-initdb.d/51-P_FIND_QUESTION_BY_ID.sql:ro
+      - ./server/src/main/resources/database/P_CREATE_QUESTION.sql:/docker-entrypoint-initdb.d/52-P_CREATE_QUESTION.sql:ro
+      - ./server/src/main/resources/database/P_UPDATE_QUESTION.sql:/docker-entrypoint-initdb.d/53-P_UPDATE_QUESTION.sql:ro
+      - ./server/src/main/resources/database/P_DELETE_QUESTION.sql:/docker-entrypoint-initdb.d/54-P_DELETE_QUESTION.sql:ro
+      - ./server/src/main/resources/database/P_CREATE_PAIR_SESSION.sql:/docker-entrypoint-initdb.d/60-P_CREATE_PAIR_SESSION.sql:ro
+      - ./server/src/main/resources/database/P_FIND_PAIR_SESSION_BY_CODE.sql:/docker-entrypoint-initdb.d/61-P_FIND_PAIR_SESSION_BY_CODE.sql:ro
+      - ./server/src/main/resources/database/P_JOIN_PAIR_SESSION.sql:/docker-entrypoint-initdb.d/62-P_JOIN_PAIR_SESSION.sql:ro
+      - ./server/src/main/resources/database/P_START_PAIR_SESSION.sql:/docker-entrypoint-initdb.d/63-P_START_PAIR_SESSION.sql:ro
+      - ./server/src/main/resources/database/P_UPDATE_PAIR_SESSION_STATUS.sql:/docker-entrypoint-initdb.d/64-P_UPDATE_PAIR_SESSION_STATUS.sql:ro
+      - ./server/src/main/resources/database/P_INSERT_SESSION_QUESTION.sql:/docker-entrypoint-initdb.d/65-P_INSERT_SESSION_QUESTION.sql:ro
+      - ./server/src/main/resources/database/P_LIST_SESSION_QUESTIONS.sql:/docker-entrypoint-initdb.d/66-P_LIST_SESSION_QUESTIONS.sql:ro
+      - ./server/src/main/resources/database/P_UPSERT_SESSION_ANSWER.sql:/docker-entrypoint-initdb.d/67-P_UPSERT_SESSION_ANSWER.sql:ro
+      - ./server/src/main/resources/database/P_LIST_SESSION_ANSWERS.sql:/docker-entrypoint-initdb.d/68-P_LIST_SESSION_ANSWERS.sql:ro
+      - ./server/src/main/resources/database/P_COUNT_ANSWERS_FOR_QUESTION.sql:/docker-entrypoint-initdb.d/69-P_COUNT_ANSWERS_FOR_QUESTION.sql:ro
+      - ./server/src/main/resources/database/P_LIST_USER_PAIR_SESSIONS.sql:/docker-entrypoint-initdb.d/70-P_LIST_USER_PAIR_SESSIONS.sql:ro
     networks:
       - getting2know
     healthcheck:

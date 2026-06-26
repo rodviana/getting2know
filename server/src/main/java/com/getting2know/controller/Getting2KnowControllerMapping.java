@@ -15,7 +15,19 @@ public final class Getting2KnowControllerMapping {
     /** Home screen — / */
     public static final String HOME_PATH = API_VERSION_V1 + "/home";
 
+    /** Custom questions — /questions */
+    public static final String QUESTIONS_PATH = API_VERSION_V1 + "/questions";
+
+    /** Pair sessions — /sessions */
+    public static final String SESSIONS_PATH = API_VERSION_V1 + "/sessions";
+
     public static final String AUTH_LOGIN = "/login";
+    public static final String AUTH_REGISTER = "/register";
+    public static final String SESSIONS_JOIN = "/join";
+    public static final String SESSIONS_MINE = "/mine";
+    public static final String SESSIONS_START = "/start";
+    public static final String SESSIONS_ANSWERS = "/answers";
+    public static final String SESSIONS_NEXT = "/next";
 
     private Getting2KnowControllerMapping() {
     }

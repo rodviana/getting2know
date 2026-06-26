@@ -5,7 +5,9 @@ import com.getting2know.model.enums.ValidationMessageEnum;
 import com.getting2know.model.response.HttpResponseEntityDTO;
 import com.getting2know.model.request.LoginRequest;
 import com.getting2know.model.response.LoginResponse;
+import com.getting2know.model.request.RegisterRequest;
 import com.getting2know.service.LoginService;
+import com.getting2know.service.RegisterService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.slf4j.Logger;
@@ -25,9 +27,11 @@ public class LoginController extends BaseController {
     private static final Logger log = LoggerFactory.getLogger(LoginController.class);
 
     private final LoginService loginService;
+    private final RegisterService registerService;
 
-    public LoginController(LoginService loginService) {
+    public LoginController(LoginService loginService, RegisterService registerService) {
         this.loginService = loginService;
+        this.registerService = registerService;
     }
 
     @PostMapping(Getting2KnowControllerMapping.AUTH_LOGIN)
@@ -46,6 +50,25 @@ public class LoginController extends BaseController {
             return badRequest(e);
         } catch (Exception e) {
             return internalServerError(e, ValidationMessageEnum.UNEXPECTED_ERROR_LOGIN);
+        }
+    }
+
+    @PostMapping(Getting2KnowControllerMapping.AUTH_REGISTER)
+    @Operation(summary = "Register", description = "Creates a new account and returns JWT.")
+    public ResponseEntity<HttpResponseEntityDTO<?>> register(@RequestBody RegisterRequest request) {
+        HttpResponseEntityDTO<LoginResponse> response = new HttpResponseEntityDTO<>();
+        try {
+            LoginResponse data = registerService.register(request);
+            log.info("[register] OK email={}", data.getEmail());
+            response.setData(data);
+            response.setSuccess(true);
+            response.setStatus(HttpStatus.OK.value());
+            response.setMessage("Account created.");
+            return ResponseEntity.ok(response);
+        } catch (GlobalException e) {
+            return badRequest(e);
+        } catch (Exception e) {
+            return internalServerError(e, ValidationMessageEnum.UNEXPECTED_ERROR_REGISTER);
         }
     }
 }
