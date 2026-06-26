@@ -1,4 +1,4 @@
-import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
+import { BrowserRouter, Navigate, Route, Routes, useSearchParams } from 'react-router-dom';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { ToastProvider } from './components/ToastProvider';
 import Layout from './components/Layout';
@@ -8,6 +8,8 @@ import Landing from './pages/Landing';
 import Home from './pages/Home';
 import CreateSession from './pages/CreateSession';
 import JoinSession from './pages/JoinSession';
+import JoinSessionByLink from './pages/JoinSessionByLink';
+import { sanitizeRedirectPath } from './utils/navigation';
 import SessionLobby from './pages/SessionLobby';
 import SessionPlay from './pages/SessionPlay';
 import SessionSummary from './pages/SessionSummary';
@@ -24,8 +26,10 @@ function LandingRoute() {
 
 function LoginRoute() {
   const { isAuthenticated } = useAuth();
+  const [searchParams] = useSearchParams();
+  const redirectTo = sanitizeRedirectPath(searchParams.get('redirect'));
   if (isAuthenticated) {
-    return <Navigate to="/home" replace />;
+    return <Navigate to={redirectTo || '/home'} replace />;
   }
   return <Login />;
 }
@@ -38,6 +42,7 @@ export default function App() {
           <Routes>
             <Route path="/" element={<LandingRoute />} />
             <Route path="/login" element={<LoginRoute />} />
+            <Route path="/join/:code" element={<JoinSessionByLink />} />
             <Route element={<ProtectedRoute />}>
               <Route element={<Layout />}>
                 <Route path="home" element={<Home />} />

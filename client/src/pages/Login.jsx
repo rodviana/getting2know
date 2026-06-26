@@ -1,20 +1,27 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { login, register } from '../services/authService';
 import { ApiError, showApiError } from '../services/apiClient';
 import SimpleModal from '../components/ui/SimpleModal';
 import { FieldLabel, TextInput } from '../components/ui/PageElements';
+import { sanitizeRedirectPath } from '../utils/navigation';
 
 export default function Login() {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const redirectTo = sanitizeRedirectPath(searchParams.get('redirect'));
+  const joiningSession = Boolean(redirectTo?.startsWith('/join/'));
   const { login: saveSession } = useAuth();
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const [name, setName] = useState('');
   const [loading, setLoading] = useState(false);
   const [registerOpen, setRegisterOpen] = useState(false);
   const [inlineError, setInlineError] = useState('');
+
+  function navigateAfterAuth() {
+    navigate(redirectTo || '/home', { replace: true });
+  }
 
   async function handleEnter(event) {
     event.preventDefault();
@@ -23,7 +30,7 @@ export default function Login() {
     try {
       const data = await login(username.trim(), password, { showError: false });
       saveSession(data);
-      navigate('/home', { replace: true });
+      navigateAfterAuth();
     } catch (error) {
       if (error instanceof ApiError && error.code === 'USER_NOT_FOUND') {
         setRegisterOpen(true);
@@ -44,9 +51,10 @@ export default function Login() {
     setInlineError('');
     setLoading(true);
     try {
-      const data = await register(username.trim(), password, name.trim(), { showError: false });
+      const trimmedUsername = username.trim();
+      const data = await register(trimmedUsername, password, trimmedUsername, { showError: false });
       saveSession(data);
-      navigate('/home', { replace: true });
+      navigateAfterAuth();
     } catch (error) {
       if (error instanceof ApiError) {
         setInlineError(error.message);
@@ -60,7 +68,6 @@ export default function Login() {
 
   function closeRegisterModal() {
     setRegisterOpen(false);
-    setName('');
     setInlineError('');
   }
 
@@ -84,9 +91,13 @@ export default function Login() {
           onSubmit={handleEnter}
           noValidate
         >
-          <h2 className="text-lg font-semibold text-slate-900">Entrar</h2>
+          <h2 className="text-lg font-semibold text-slate-900">
+            {joiningSession ? 'Entrar para participar' : 'Entrar'}
+          </h2>
           <p className="mt-1 mb-5 text-sm text-slate-500">
-            Escolha um usuário e senha. Se for a primeira vez, a gente te ajuda a criar a conta.
+            {joiningSession
+              ? 'Faça login ou crie sua conta para entrar na sessão.'
+              : 'Escolha um usuário e senha. Se for a primeira vez, a gente te ajuda a criar a conta.'}
           </p>
 
           <div className="mb-4">
@@ -133,21 +144,9 @@ export default function Login() {
         open={registerOpen}
         onClose={closeRegisterModal}
         title="Primeira vez por aqui?"
-        description={`Não encontramos uma conta com "${username.trim() || 'este usuário'}". Quer criar agora? É só confirmar — leva um instante.`}
+        description={`Não encontramos uma conta com "${username.trim() || 'este usuário'}". Quer criar agora?${joiningSession ? ' Depois você entra direto na sessão.' : ''}`}
       >
         <form onSubmit={handleCreateAccount} className="space-y-4" noValidate>
-          <div>
-            <FieldLabel htmlFor="register-name">Como podemos te chamar? (opcional)</FieldLabel>
-            <TextInput
-              id="register-name"
-              type="text"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              placeholder="Ex.: Rodrigo"
-              autoComplete="name"
-            />
-          </div>
-
           {inlineError && (
             <p className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">
               {inlineError}

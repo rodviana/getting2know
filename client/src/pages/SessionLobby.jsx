@@ -1,7 +1,7 @@
 import { Link, Navigate, useParams } from 'react-router-dom';
 import { useState } from 'react';
 import { useSession } from '../hooks/useSession';
-import CodeDisplay from '../components/session/CodeDisplay';
+import InviteLinkDisplay from '../components/session/InviteLinkDisplay';
 import QuestionTypeBadge from '../components/session/QuestionTypeBadge';
 import { getSessionFormatLabel, getSessionFormatStyle } from '../utils/sessionFormat';
 import { Card, EmptyState, LoadingCard, PageHeader } from '../components/ui/PageElements';
@@ -74,7 +74,7 @@ export default function SessionLobby() {
         description={
           session.format === 'live'
             ? 'Modo ao vivo: quando os dois estiverem aqui, o anfitrião inicia. Vocês respondem juntos, pergunta a pergunta.'
-            : 'Compartilhe o código. Quando os dois estiverem aqui, comecem — cada um responde no seu ritmo.'
+            : 'Compartilhe o link. Quando os dois estiverem aqui, comecem — cada um responde no seu ritmo.'
         }
       />
 
@@ -84,7 +84,7 @@ export default function SessionLobby() {
             {getSessionFormatLabel(session.format)}
           </span>
         </div>
-        <CodeDisplay code={session.code} />
+        <InviteLinkDisplay code={session.code} />
       </Card>
 
       <div className="grid gap-4 sm:grid-cols-2">
@@ -122,8 +122,7 @@ export default function SessionLobby() {
       {!session.partnerJoined && (
         <Card className="border-dashed border-amber-200 bg-amber-50/50">
           <p className="text-sm text-amber-900">
-            Aguardando o parceiro entrar com o código{' '}
-            <span className="font-mono font-bold">{session.code}</span>.
+            Aguardando o parceiro entrar pelo link do convite.
             Esta tela atualiza automaticamente quando ele entrar.
           </p>
         </Card>

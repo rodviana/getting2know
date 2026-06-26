@@ -7,11 +7,11 @@ export async function createSession(payload, token) {
   }, { token });
 }
 
-export async function joinSession(code, token) {
+export async function joinSession(code, token, options = {}) {
   return apiRequest('/api/v1/sessions/join', {
     method: 'POST',
     body: JSON.stringify({ code }),
-  }, { token });
+  }, { token, ...options });
 }
 
 export async function fetchSession(code, token) {
