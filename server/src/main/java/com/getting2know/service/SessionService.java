@@ -38,6 +38,7 @@ import com.getting2know.utils.JsonUtils;
 import com.getting2know.utils.QuestionValidationUtils;
 import com.getting2know.utils.SessionValidationUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -139,6 +140,7 @@ public class SessionService {
         UserRecord currentUser = requireUser(email);
         PairSessionRecord session = requireSession(code);
         requireParticipant(session, currentUser.getId());
+        session = maybeAdvanceLiveSessionToReveal(session);
         return buildResponse(session, currentUser);
     }
 
@@ -202,6 +204,7 @@ public class SessionService {
         return getSession(email, code);
     }
 
+    @Transactional
     public SessionResponse submitAnswer(String email, String code, SubmitAnswerRequest request) {
         UserRecord currentUser = requireUser(email);
         PairSessionRecord session = requireSession(code);
@@ -224,6 +227,13 @@ public class SessionService {
                                            SubmitAnswerRequest request,
                                            String email,
                                            String code) {
+        pairSessionJdbcRepository.lockSession(session.getId());
+        session = requireSession(code);
+
+        if (!SessionStatusEnum.PLAYING.getCode().equals(session.getStatus())) {
+            return getSession(email, code);
+        }
+
         List<SessionQuestionRecord> questions = pairSessionJdbcRepository.listQuestions(new SessionIdFilter(session.getId()));
         if (session.getCurrentIndex() >= questions.size()) {
             throw GlobalException.of(ValidationMessageEnum.SESSION_INVALID_STATUS);
@@ -240,7 +250,8 @@ public class SessionService {
                 .anyMatch(answer -> answer.getSessionQuestionId().equals(currentQuestion.getId())
                         && answer.getUserId().equals(currentUser.getId()));
         if (alreadyAnswered) {
-            throw GlobalException.of(ValidationMessageEnum.SESSION_ALREADY_ANSWERED);
+            maybeAdvanceLiveSessionToReveal(session);
+            return getSession(email, code);
         }
 
         QuestionTypeEnum type = QuestionTypeEnum.fromCode(currentQuestion.getType());
@@ -252,8 +263,8 @@ public class SessionService {
                 currentUser.getId(),
                 JsonUtils.toJson(request.getAnswer())));
 
-        int answerCount = pairSessionJdbcRepository.countAnswersForQuestion(currentQuestion.getId());
-        String nextStatus = answerCount >= 2
+        List<SessionAnswerRecord> updatedAnswers = pairSessionJdbcRepository.listAnswers(new SessionIdFilter(session.getId()));
+        String nextStatus = bothAnsweredCurrentQuestion(updatedAnswers, currentQuestion, session)
                 ? SessionStatusEnum.REVEAL.getCode()
                 : SessionStatusEnum.PLAYING.getCode();
 
@@ -558,6 +569,44 @@ public class SessionService {
 
     private String answerKey(Long questionId, Long userId) {
         return questionId + ":" + userId;
+    }
+
+    private PairSessionRecord maybeAdvanceLiveSessionToReveal(PairSessionRecord session) {
+        SessionFormatEnum format = SessionFormatEnum.fromCode(session.getFormat());
+        if (format != SessionFormatEnum.LIVE
+                || !SessionStatusEnum.PLAYING.getCode().equals(session.getStatus())
+                || session.getPartnerUserId() == null) {
+            return session;
+        }
+
+        List<SessionQuestionRecord> questions = pairSessionJdbcRepository.listQuestions(new SessionIdFilter(session.getId()));
+        if (session.getCurrentIndex() >= questions.size()) {
+            return session;
+        }
+
+        SessionQuestionRecord currentQuestion = questions.get(session.getCurrentIndex());
+        List<SessionAnswerRecord> answers = pairSessionJdbcRepository.listAnswers(new SessionIdFilter(session.getId()));
+        if (!bothAnsweredCurrentQuestion(answers, currentQuestion, session)) {
+            return session;
+        }
+
+        return pairSessionJdbcRepository.updateStatus(new UpdateSessionStatusFilter(
+                session.getId(),
+                SessionStatusEnum.REVEAL.getCode(),
+                session.getCurrentIndex(),
+                null));
+    }
+
+    private boolean bothAnsweredCurrentQuestion(List<SessionAnswerRecord> answers,
+                                                SessionQuestionRecord question,
+                                                PairSessionRecord session) {
+        boolean hostAnswered = answers.stream()
+                .anyMatch(answer -> answer.getSessionQuestionId().equals(question.getId())
+                        && answer.getUserId().equals(session.getHostUserId()));
+        boolean partnerAnswered = answers.stream()
+                .anyMatch(answer -> answer.getSessionQuestionId().equals(question.getId())
+                        && answer.getUserId().equals(session.getPartnerUserId()));
+        return hostAnswered && partnerAnswered;
     }
 
     private void requireControl(PairSessionRecord session, UserRecord currentUser) {

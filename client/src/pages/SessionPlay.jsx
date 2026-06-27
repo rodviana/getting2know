@@ -236,24 +236,36 @@ function LiveSessionPlay({
   }, [questionId, currentQuestion, session?.myCurrentAnswer]);
 
   useEffect(() => {
-    const shouldPoll = session?.waitingForPartner || session?.status === 'reveal';
+    const bothAnswered = session?.iAnsweredCurrent && session?.partnerAnsweredCurrent;
+    const shouldPoll = session?.waitingForPartner
+      || session?.status === 'reveal'
+      || (bothAnswered && session?.status === 'playing');
     if (!shouldPoll) return undefined;
     const interval = getSessionPollInterval(session?.format);
     const intervalId = setInterval(() => { refresh(); }, interval);
     return () => clearInterval(intervalId);
-  }, [session?.waitingForPartner, session?.status, session?.format, refresh]);
+  }, [
+    session?.waitingForPartner,
+    session?.status,
+    session?.format,
+    session?.iAnsweredCurrent,
+    session?.partnerAnsweredCurrent,
+    refresh,
+  ]);
 
   const myName = authSession?.name || 'Você';
   const otherName = getOtherParticipantName(session);
+  const bothAnswered = session.iAnsweredCurrent && session.partnerAnsweredCurrent;
   const isReveal = session.status === 'reveal';
-  const isWaiting = session.waitingForPartner;
+  const isRevealPending = bothAnswered && session.status === 'playing';
+  const isWaiting = !isReveal && !isRevealPending && session.iAnsweredCurrent && !session.partnerAnsweredCurrent;
   const isLiveGuest = !session.canControl;
   const myAnswer = session.myCurrentAnswer;
   const partnerAnswer = session.partnerCurrentAnswer;
 
   async function handleSubmit(event) {
     event.preventDefault();
-    if (!isAnswerValid(answer, currentQuestion) || submitting || isWaiting) return;
+    if (!isAnswerValid(answer, currentQuestion) || submitting || isWaiting || session.iAnsweredCurrent) return;
     setSubmitting(true);
     try {
       await submitAnswer(code, currentQuestion.id, answer);
@@ -342,6 +354,12 @@ function LiveSessionPlay({
         <Card className="border-dashed border-sky-200 bg-sky-50/50">
           <p className="text-sm text-sky-900">
             Sua resposta foi enviada. Aguardando <strong>{otherName}</strong> responder...
+          </p>
+        </Card>
+      ) : isRevealPending ? (
+        <Card className="border-dashed border-sky-200 bg-sky-50/50">
+          <p className="text-sm text-sky-900">
+            Vocês dois responderam. Preparando para ver as respostas...
           </p>
         </Card>
       ) : (

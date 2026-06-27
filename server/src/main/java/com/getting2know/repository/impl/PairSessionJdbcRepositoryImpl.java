@@ -196,6 +196,17 @@ public class PairSessionJdbcRepositoryImpl implements PairSessionJdbcRepository 
     }
 
     @Override
+    public void lockSession(Long sessionId) {
+        MapSqlParameterSource params = new MapSqlParameterSource("sessionId", sessionId);
+        try {
+            jdbc.queryForObject(P_LOCK_PAIR_SESSION, params, Long.class);
+        } catch (DataAccessException e) {
+            log.error("[sessions] lock session error sessionId={}: {}", sessionId, e.getMessage(), e);
+            throw GlobalException.of(ValidationMessageEnum.FAILED_LOAD_SESSION);
+        }
+    }
+
+    @Override
     public List<String> listPreviouslyAskedQuestionRefs(UserPairFilter filter) {
         MapSqlParameterSource params = new MapSqlParameterSource()
                 .addValue("userId", filter.getUserId())

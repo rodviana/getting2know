@@ -32,6 +32,7 @@ public interface PairSessionJdbcRepository {
     String P_LIST_USER_PAIR_SESSIONS = "SELECT * FROM p_list_user_pair_sessions(:userId)";
     String P_LIST_PREVIOUSLY_ASKED_QUESTION_REFS =
             "SELECT * FROM p_list_previously_asked_question_refs(:userId, :partnerUserId)";
+    String P_LOCK_PAIR_SESSION = "SELECT id FROM pair_sessions WHERE id = :sessionId FOR UPDATE";
 
     PairSessionRecord create(CreatePairSessionFilter filter);
 
@@ -56,4 +57,6 @@ public interface PairSessionJdbcRepository {
     List<UserSessionListRecord> listByUserId(UserIdFilter filter);
 
     List<String> listPreviouslyAskedQuestionRefs(UserPairFilter filter);
+
+    void lockSession(Long sessionId);
 }
