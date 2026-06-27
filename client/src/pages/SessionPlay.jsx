@@ -215,9 +215,14 @@ function LiveSessionPlay({
   const [answer, setAnswer] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [advancing, setAdvancing] = useState(false);
+  const [submittedWaiting, setSubmittedWaiting] = useState(false);
   const activeQuestionIdRef = useRef(null);
 
   const questionId = currentQuestion?.id;
+
+  useEffect(() => {
+    setSubmittedWaiting(false);
+  }, [questionId]);
 
   useEffect(() => {
     if (!questionId || !currentQuestion) return;
@@ -237,7 +242,8 @@ function LiveSessionPlay({
 
   useEffect(() => {
     const bothAnswered = session?.iAnsweredCurrent && session?.partnerAnsweredCurrent;
-    const shouldPoll = session?.waitingForPartner
+    const shouldPoll = submittedWaiting
+      || session?.waitingForPartner
       || session?.status === 'reveal'
       || (bothAnswered && session?.status === 'playing');
     if (!shouldPoll) return undefined;
@@ -245,6 +251,7 @@ function LiveSessionPlay({
     const intervalId = setInterval(() => { refresh(); }, interval);
     return () => clearInterval(intervalId);
   }, [
+    submittedWaiting,
     session?.waitingForPartner,
     session?.status,
     session?.format,
@@ -255,10 +262,16 @@ function LiveSessionPlay({
 
   const myName = authSession?.name || 'Você';
   const otherName = getOtherParticipantName(session);
+  const isGuest = session.role === 'partner';
+  const hostName = session.hostName || 'Anfitrião';
   const bothAnswered = session.iAnsweredCurrent && session.partnerAnsweredCurrent;
   const isReveal = session.status === 'reveal';
   const isRevealPending = bothAnswered && session.status === 'playing';
-  const isWaiting = !isReveal && !isRevealPending && session.iAnsweredCurrent && !session.partnerAnsweredCurrent;
+  const isWaiting = !isReveal && !isRevealPending && (
+    submittedWaiting
+    || session.waitingForPartner
+    || (session.iAnsweredCurrent && !session.partnerAnsweredCurrent)
+  );
   const isLiveGuest = !session.canControl;
   const myAnswer = session.myCurrentAnswer;
   const partnerAnswer = session.partnerCurrentAnswer;
@@ -269,6 +282,7 @@ function LiveSessionPlay({
     setSubmitting(true);
     try {
       await submitAnswer(code, currentQuestion.id, answer);
+      setSubmittedWaiting(true);
     } catch {
       // apiClient already showed the error toast
     } finally {
@@ -294,14 +308,22 @@ function LiveSessionPlay({
         backTo={`/sessions/${code}`}
         backLabel="Sala de espera"
         eyebrow={`Sessão ${code}`}
-        title={isReveal ? 'Vejam as respostas' : isWaiting ? `Aguardando ${otherName}` : 'Sua vez de responder'}
+        title={
+          isReveal
+            ? 'Vejam as respostas'
+            : isWaiting
+              ? (isGuest ? 'Aguardando o anfitrião' : `Aguardando ${otherName}`)
+              : 'Sua vez de responder'
+        }
         description={
           isReveal
             ? isLiveGuest
               ? `As duas respostas ficam visíveis. Aguarde ${otherName} avançar.`
               : 'As duas respostas ficam visíveis agora. Conversem e sigam quando quiserem.'
             : isWaiting
-              ? `Você já respondeu. Assim que ${otherName} enviar, vocês veem juntos.`
+              ? (isGuest
+                ? `Você já respondeu. Assim que ${hostName} enviar, vocês veem juntos.`
+                : `Você já respondeu. Assim que ${otherName} enviar, vocês veem juntos.`)
               : 'Modo ao vivo: respondam juntos, pergunta a pergunta.'
         }
       />
@@ -353,7 +375,15 @@ function LiveSessionPlay({
       ) : isWaiting ? (
         <Card className="border-dashed border-sky-200 bg-sky-50/50">
           <p className="text-sm text-sky-900">
-            Sua resposta foi enviada. Aguardando <strong>{otherName}</strong> responder...
+            {isGuest ? (
+              <>
+                Sua resposta foi enviada. Aguarde o anfitrião, <strong>{hostName}</strong>, responder...
+              </>
+            ) : (
+              <>
+                Sua resposta foi enviada. Aguardando <strong>{otherName}</strong> responder...
+              </>
+            )}
           </p>
         </Card>
       ) : isRevealPending ? (
